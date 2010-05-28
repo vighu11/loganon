@@ -74,6 +74,14 @@ LOBSTER project, some tools and methods for anonymization are implemented.
 	practically any anonymization policy that will be forced to network packets. The anonymization
 	function is currently part of the LOBSTER software. 
 
+ARGUS
+ranonymize - anonymize argus data fields. 
+        Ranonymize reads argus data from an argus-data source, strips out fields, using the same strategies as rastrip(1) 
+        and anonymizes the remaining fields in Argus records, including the network addresses, protocol specific 
+        port numbers, timestamps, transaction reference numbers, TCP base sequence numbers, IP identifiers, and the 
+        record sequence numbers. 
+        http://www.qosient.com/argus/anonymization.shtml
+
 
 /*---------------------------------------------------------------------*/
 		attacks against network log anonymization
