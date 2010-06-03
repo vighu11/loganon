@@ -1,54 +1,138 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <dumbnet.h>
+//nclude <math.h>
 
 char * truncation ( char *, int);
 void gen_random(char *, const int);
 char * black_marker(char *, int );
 void swap(char *, int , int );
-int permute(char *, int);
 char * random_permutation();
 
+
+struct addr * ipv4_black_marker (struct addr, int);
+struct addr * ipv4_field_rotation (struct addr, int);
+
 int main (int argc, char *argv[]){
-        int i = 0,j=0;
+  int i = 0,j=0;
 	char *backup = NULL;
 	char *key = malloc(14*sizeof(char));
-	gen_random(key,14);
+  struct addr ip,*newip;
+  char * buffer;
+
+  gen_random(key,14);
 	if (argc > 1){
 		for ( i=1; i < argc;i++) { 
 			printf("Argument %d -> %s\n", i,argv[i]);
-			printf("   Truncated: %s\n", (char *) truncation(argv[i], 5)); /* leave 5 */
-			printf("   Random Permutation (need hash tables to not duplicate: %s\n", (char *) random_permutation()); /* 3 for last field, 2 for two last fields, 1 for 3 last fields and 0 for all fields */
+
+
+      
+      addr_aton(argv[i],&ip);
+      printf("Network Format %u\n", ip.addr_ip);
+
+
+      //Field Black Marker
+      newip = ipv4_black_marker(ip,1);
+      printf("\t Field Black Marker -> 1 field:  %s\n", addr_ntoa(newip));
+
+      newip = ipv4_black_marker(ip,2);
+      printf("\t Field Black Marker -> 2 fields:  %s\n", addr_ntoa(newip));
+     
+      //Fields Rotation Test
+
+      newip=ipv4_field_rotation(ip,1);
+      printf("\t Field Bit rotation -> 1 fields:  %s\n", addr_ntoa(newip));      
+      
+      
+
+      printf("\n\t String Operations also implemented\n\n");
+			printf("\t Truncated: %s\n", (char *) truncation(argv[i], 5)); /* leave 5 */
+			printf("\t Random Permutation (need hash tables to not duplicate: %s\n", (char *) random_permutation()); /* 3 for last field, 2 for two last fields, 1 for 3 last fields and 0 for all fields */
 			backup = malloc(sizeof(char) * strlen(argv[i]));
 			strcpy(backup, argv[i]);
-			printf("   Black marked with 2 fields: %s\n", (char *) black_marker(argv[i],2)); /* 3 for last field, 2 for two last fields, 1 for 3 last fields and 0 for all fields */
+			printf("\t Black marked with 2 fields: %s\n", (char *) black_marker(argv[i],2)); /* 3 for last field, 2 for two last fields, 1 for 3 last fields and 0 for all fields */
+ 			free(backup);
+     
 
-			   for (j=0;j< 10;j++){
-      				printf("   Testing depending permutation: %s\n",backup);
-			   	permute(backup, strlen(backup));
-				}
-
-			free(backup);
-
-
-                      }
-                }
+      }
+    }
 }
 
-/* Truncate a string, newLen will be the point of truncation */
-/* Example 192.168.1.1 -> 192.168.1.0 OR 10.1.1.1 */
+
+/* Working with libdumbnet */
+struct addr * ipv4_black_marker (struct addr ip, int fields){
+  unsigned long int expr1=0xFFFFFFFF, expr2=0;
+  struct addr *newip = malloc(sizeof(struct addr));
+  int i = fields;
+
+  if (1 < fields > 5){ //Ip have at most 4 fields 
+      printf("Wrong fields number in ipv4_black_marker");
+      free(newip);
+      return NULL;
+      }
+  else{
+      expr1 = expr1 >> fields*8; //Shifting expr1 to right (ip is on little endian format)
+      do{
+          expr2 = expr2 + (1 << (4-i)*8);
+          i--;
+          }while(i>0);
+      }
+
+  memcpy (newip,&ip,sizeof(ip)); //copying the original ip
+  newip->addr_ip = (newip->addr_ip & expr1) | expr2; //Adjust anonymized value to new IP
+  return newip;
+}
+
+
+struct addr * ipv4_field_rotation (struct addr ip, int fields){
+  unsigned long int expr1=0xFFFFFFFF, expr2=0;
+  struct addr *newip = malloc(sizeof(struct addr));
+  int i = fields;
+
+  if (1 < fields > 5){ //Ip have at most 4 fields 
+      printf("Wrong fields number in ipv4_field_rotation");
+      free(newip);
+      return NULL;
+      }
+
+  memcpy (newip,&ip,sizeof(ip)); //copying the original ip                                        for (i = 0; i < newLen; i++)
+  newip->addr_ip = (newip->addr_ip << (fields*8)) | (newip->addr_ip >> 32-(fields*8));
+  return newip;                                          
+}
+
+
 
 char * truncation (char *ip, int newLen){
-        int i = 0;
-        if (newLen > sizeof(ip))
-                newLen = sizeof(ip);
-        char *newIp = malloc(newLen+1);
-        for (i = 0; i < newLen; i++)
-                newIp[i] = ip[i];
-        newIp[i]='\0';;
-        return newIp;
+    int i = 0;
+    if (newLen > sizeof(ip))
+            newLen = sizeof(ip);
+    char *newIp = malloc(newLen+1);
+    for (i = 0; i < newLen; i++)
+            newIp[i] = ip[i];
+    newIp[i]='\0';;
+    return newIp;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Black marker, anonymize the entire field or just part of it */
 /* Input: Ip and number of octets to anonymize */
@@ -125,60 +209,6 @@ void gen_random(char *s, const int len) {
 
 
 
-
-/* Test for prefix-preserving permutation */
-void swap(char *s, int a, int b)
-{
-   char temp=s[a];
-   s[a] = s[b];
-   s[b] = temp;
-}
-
-
-int permute(char *str, int len)
-{
-	int key=len-1;
-	int newkey=len-1;
-
-	/* The key value is the first value from the end which
-	is smaller than the value to its immediate right        */
-
-	while ((key > 0) && (str[key] <= str[key-1])) {
-		key--; 
-		}
-
-	key--;
-
-	/* If key < 0 the data is in reverse sorted order, 
-	which is the last permutation.                          */
-
-	if( key < 0 )
-		return 0;
-
-	/* str[key+1] is greater than str[key] because of how key 
-	was found. If no other is greater, str[key+1] is used   */
-
-	newkey=len-1;
-	while( (newkey > key) && (str[newkey] <= str[key]) ){
-		newkey--;
-		}
-	swap(str, key, newkey);
-
-	/* variables len and key are used to walk through the tail,
-	exchanging pairs from both ends of the tail.  len and 
-	key are reused to save memory                           */
-	len--;
-	key++;
-	/* The tail must end in sorted order to produce the
-	next permutation.                                       */
-	while(len>key){
-		swap(str,len,key);
-		key++;
-		len--;
-		}
-
-	return 1;
-}
 
 
 
