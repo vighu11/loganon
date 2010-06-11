@@ -1,4 +1,4 @@
-include_directories(AFTER ${loganon_SOURCE_DIR}/src/include)
+include_directories(AFTER ${loganon_SOURCE_DIR}/lib/include)
 
 # PCRE
 include_directories(AFTER ${PCRE_INCLUDE_DIR})

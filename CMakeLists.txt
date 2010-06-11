@@ -19,4 +19,5 @@ endif(WIN32)
 
 FIND_PACKAGE(PCRE REQUIRED)
 
-add_subdirectory(src)
+add_subdirectory(bin)
+add_subdirectory(lib)
