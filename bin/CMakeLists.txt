@@ -5,7 +5,7 @@ include_directories(AFTER ${PCRE_INCLUDE_DIR})
 
 link_directories(${loganon_SOURCE_DIR}/src/)
 
-add_executable(loganon main.c)
+add_executable(loganon-tool main.c)
 
-target_link_libraries(loganon ${PCRE_PCRE_LIBRARY} loganon)
+target_link_libraries(loganon-tool ${PCRE_PCRE_LIBRARY} loganon)
 
