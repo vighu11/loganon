@@ -12,3 +12,4 @@ set_target_properties(loganon PROPERTIES SOVERSION 1)
 
 target_link_libraries(loganon ${PCRE_PCRE_LIBRARY} ${DUMBNET_LIBRARIES})
 
+add_subdirectory(tests)
