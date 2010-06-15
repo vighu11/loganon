@@ -24,14 +24,9 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef _LOGANON_GENERAL_H_
-#define _LOGANON_GENERAL_H_
+#ifndef _LOGANON_RANDOM_H_
+#define _LOGANON_RANDOM_H_
 
-#define LOGANON_VERSION_MAJOR 0
-#define LOGANON_VERSION_MINOR 1
-#define LOGANON_VERSION_MICRO 0
-#define LOGANON_SCMID "$Id$"
+void loganon_random_ultraweak_symkey(char *s, const int len);
 
-#endif	/* _LOGANON_GENERAL_H_ */
-
-
+#endif	/* _LOGANON_RANDOM_H_ */

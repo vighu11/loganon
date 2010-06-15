@@ -17,7 +17,12 @@ else(WIN32)
         add_definitions(-DUNIX)
 endif(WIN32)
 
-FIND_PACKAGE(PCRE REQUIRED)
+find_package(PCRE REQUIRED)
+
+#
+# Check for DUMBNET library
+#
+find_package(DUMBNET REQUIRED)
 
 add_subdirectory(bin)
 add_subdirectory(lib)

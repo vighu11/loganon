@@ -4,8 +4,9 @@
 #include <dumbnet.h>
 //nclude <math.h>
 
+#include <loganon/random.h>
+
 char * truncation ( char *, int);
-void gen_random(char *, const int);
 char * black_marker(char *, int );
 void swap(char *, int , int );
 char * random_permutation();
@@ -14,14 +15,14 @@ char * random_permutation();
 struct addr * ipv4_black_marker (struct addr, int);
 struct addr * ipv4_field_rotation (struct addr, int);
 
-int main (int argc, char *argv[]){
+int loganon_ip_anon (int argc, char *argv[]){
   int i = 0,j=0;
 	char *backup = NULL;
 	char *key = malloc(14*sizeof(char));
   struct addr ip,*newip;
   char * buffer;
 
-  gen_random(key,14);
+  loganon_random_ultraweak_symkey(key,14);
 	if (argc > 1){
 		for ( i=1; i < argc;i++) { 
 			printf("Argument %d -> %s\n", i,argv[i]);
@@ -114,26 +115,6 @@ char * truncation (char *ip, int newLen){
     return newIp;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Black marker, anonymize the entire field or just part of it */
 /* Input: Ip and number of octets to anonymize */
 char * black_marker(char *ip, int octet_number){
@@ -187,29 +168,3 @@ char * random_permutation(){
 	strcpy(result_pointer, result);
 	return result_pointer;
 }
-
-
-/* An algorithm to generate a random symetric key */
-
-void gen_random(char *s, const int len) {
-	int i = 0;
-	static const char alphanum[] =
-		"0123456789"
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		"abcdefghijklmnopqrstuvwxyz";
-
-	for (i = 0; i < len; ++i) {
-		s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
-	}
-
-	s[len] = 0;
-}
-
-
-
-
-
-
-
-
-
