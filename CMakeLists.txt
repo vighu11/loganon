@@ -4,6 +4,8 @@ project(loganon C)
 set(CMAKE_BUILD_TYPE "DEBUG")
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
+include(CTest)
+
 include(CheckIncludeFile)
 include(CheckFunctionExists)
 include(CheckLibraryExists)
