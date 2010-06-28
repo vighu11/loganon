@@ -11,7 +11,6 @@
 #include "debug_utils.h"
 #include "files_extensions.h"
 
-#include "loganon_errors.h"
 #include "loganon_parser_pcap.h"
 
 
@@ -38,5 +37,12 @@ int8_t initLoganon(const char *filename)
 
 		/* Search for sensitive data */
 		ret = anonPcapSearchSensitiveData(&ip_list);
+		if(ret == ANON_FAIL) {
+
+			print_debug(DBG_HIG_LVL, "anonPcapSearchSensitiveData error\n");
+			return ret;
+		}
 	}
+
+	return ANON_SUCCESS;
 }

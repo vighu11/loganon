@@ -6,11 +6,14 @@
 #ifndef PROTO_UTILS_H
 #define PROTO_UTILS_H
 
+#include <arpa/inet.h>
+#include <netinet/ip.h>
+
 /*
  * Retrieve EtherType field from ethernet datagrams
  */
 #define GET_ETHERTYPE(pkt) \
-	((uint16_t)(pkt[12]) << 8) | (uint16_t)pkt
+	((uint16_t)(pkt[12]) << 8) | (uint16_t)pkt[13]
 
 /* EtherType values */
 #define ETHER_TYPE_IP	 0x0800

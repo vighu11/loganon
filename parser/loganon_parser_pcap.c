@@ -5,14 +5,12 @@
 
 #include <pcap.h>
 #include <inttypes.h>
-#include <arpa/inet.h>
-#include <netinet/ip.h>
 
 #include "debug_utils.h"
 #include "proto_utils.h"
 
+#include "loganon_queue.h"
 #include "loganon_errors.h"
-#include "loganon_structs.h"
 
 
 /* Pcap file handle */
@@ -32,8 +30,8 @@ int8_t anonPcapOpen(const char *filename)
 		print_debug(DBG_HIG_LVL, "pcap_open_offline error: %s\n", errbuf); 
 		return ANON_FAIL; 
 	}
-
-	return ANON_SUCC;
+	
+	return ANON_SUCCESS;
 }
 
 /*
@@ -46,7 +44,7 @@ int8_t anonPcapSearchSensitiveData(struct ip_anon** ips)
 	/* Buffer for packets */
 	u_char *packet;
 
-   	while(packet = pcap_next(handle, &header)) { 
+   	while((packet = pcap_next(handle, &header))) { 
 
 		u_char *pkt_ptr = (u_char *)packet; 
       		/* Retrieve EtherType from ethernet packet */
@@ -66,8 +64,8 @@ int8_t anonPcapSearchSensitiveData(struct ip_anon** ips)
 		/* Retrieve IP address from datagram */
 		struct in_addr *ip_addr = &(ip_hdr->ip_src);
 
-		printf("Anonymizing %s...\n", inet_ntoa(*ip_addr));
+		print_debug(DBG_LOW_LVL, "Anonymizing %s...\n", inet_ntoa(*ip_addr));
  	}
 
-	return ANON_SUCC;
+	return ANON_SUCCESS;
 }
