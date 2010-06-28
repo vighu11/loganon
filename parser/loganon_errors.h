@@ -9,7 +9,7 @@
 /*
  * Return values
  */
-#define ANON_FAIL -1
-#define ANON_SUCC  0
+#define ANON_FAIL     -1
+#define ANON_SUCCESS   0
 
 #endif

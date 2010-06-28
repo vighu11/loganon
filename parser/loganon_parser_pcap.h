@@ -6,6 +6,7 @@
 #ifndef LOGANON_PARSER_PCAP_H
 #define LOGANON_PARSER_PCAP_H
 
+#include "loganon_errors.h"
 #include "loganon_structs.h"
 
 /*
