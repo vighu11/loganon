@@ -10,7 +10,6 @@
 
 #include "debug_utils.h"
 #include "files_extensions.h"
-
 #include "loganon_parser_pcap.h"
 
 

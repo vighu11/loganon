@@ -19,6 +19,6 @@ int8_t anonPcapOpen(const char *filename);
  * Parse pcap file to find out sensitive data
  * @return 
  */
-int8_t anonPcapSearchSensitiveData(struct ip_anon** ips);
+int8_t anonPcapSearchSensitiveData(struct ip_anon* ips);
 
 #endif
