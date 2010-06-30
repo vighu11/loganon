@@ -8,7 +8,7 @@ all: $(EXEC)
 #
 # BINARY FILE FOR TESTS
 #
-$(EXEC): client.o loganon_parser.o loganon_parser_pcap.o
+$(EXEC): client.o loganon_parser.o loganon_parser_pcap.o loganon_queue.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 #
@@ -21,6 +21,9 @@ loganon_parser.o: loganon_parser.c debug_utils.h files_extensions.h loganon_erro
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 loganon_parser_pcap.o: loganon_parser_pcap.c debug_utils.h proto_utils.h loganon_errors.h loganon_queue.h
+	$(CC) -o $@ -c $< $(CFLAGS)
+
+loganon_queue.o: loganon_queue.c loganon_queue.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 #

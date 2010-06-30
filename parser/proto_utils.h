@@ -15,6 +15,14 @@
 #define GET_ETHERTYPE(pkt) \
 	((uint16_t)(pkt[12]) << 8) | (uint16_t)pkt[13]
 
+/*
+ * Retrieve IP_src field from IP datagram
+ * off is computed according to EtherType
+ */
+#define GET_IPSRC(pkt, off) \
+	&(((struct ip*)(pkt+off))->ip_src)
+
+
 /* EtherType values */
 #define ETHER_TYPE_IP	 0x0800
 #define ETHER_TYPE_8021Q 0x8100

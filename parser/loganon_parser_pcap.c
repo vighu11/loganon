@@ -16,6 +16,16 @@
 /* Pcap file handle */
 static pcap_t *handle; 
 
+
+static void displayIPsFound(struct ip_anon *ips)
+{
+	struct ip_anon* current = ips;
+
+	/* Display each entry */
+	for(; current; current = current->next_ip)
+		print_debug(DBG_MED_LVL, "IP: %s\n", current->ip_original);
+}
+
 /*
  * Open pcap file in offline mode
  * @return ANON_FAIL if file doesn't exist, otherwise ANON_FAIL
@@ -46,26 +56,26 @@ int8_t anonPcapSearchSensitiveData(struct ip_anon** ips)
 
    	while((packet = pcap_next(handle, &header))) { 
 
-		u_char *pkt_ptr = (u_char *)packet; 
+		u_char *pkt_ptr = (u_char *)packet;
+
       		/* Retrieve EtherType from ethernet packet */
  		uint16_t ether_type = GET_ETHERTYPE(pkt_ptr);
 
+		struct in_addr *ip_addr = NULL;
 		/* Compute offset of IP datagram */
 		if(ether_type == ETHER_TYPE_IP) {
-			pkt_ptr += 14; 
+			ip_addr = GET_IPSRC(pkt_ptr, 14);
 		}
      		else if(ether_type == ETHER_TYPE_8021Q) {
-			pkt_ptr += 18;
+			ip_addr = GET_IPSRC(pkt_ptr, 18);
 		}
 
-		/* Retrieve IP datagram */
-		struct ip *ip_hdr = (struct ip *)pkt_ptr;
-
-		/* Retrieve IP address from datagram */
-		struct in_addr *ip_addr = &(ip_hdr->ip_src);
-
-		print_debug(DBG_LOW_LVL, "Anonymizing %s...\n", inet_ntoa(*ip_addr));
+		/* Add new IP into the list if necessary */
+		insertNewIP(inet_ntoa(*ip_addr), ips);
  	}
+
+	/* Display all entries (for debug) */
+	displayIPsFound(*ips);
 
 	return ANON_SUCCESS;
 }

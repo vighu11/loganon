@@ -6,15 +6,17 @@
 #ifndef LOGANON_STRUCTS_H
 #define LOGANON_STRUCTS_H
 
+#define IP_ADDR_LEN 15
+
 /*
  * IPs list for anonymization
  */
 struct ip_anon {
 
-	char ip_original[16];
-	char ip_anonymized[16];
+	char ip_original[IP_ADDR_LEN+1];
+	char ip_anonymized[IP_ADDR_LEN+1];
 
-	struct ip_anon *nextIp;
+	struct ip_anon *next_ip;
 };
 
 #endif
