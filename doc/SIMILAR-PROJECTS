@@ -1,0 +1,111 @@
+/*---------------------------------------------------------------------*/
+			Related works documentation
+
+http://www.cc.gatech.edu/computing/Telecomm/projects/cryptopan/
+
+http://flaim.ncsa.illinois.edu/
+
+http://www.qosient.com/argus/anonymization.shtml
+
+
+
+LBNL/ICSI Enterprise Tracing Project -> http://www.icir.org/enterprise-tracing/Overview.html
+	tcpmkpub is a tool for anonymizing packet headers in trace files.
+	
+	* In addition, this project has many publications in area, some of them restrict to
+	acm/ IEEE users, I can send by mail if you need.
+
+SCRUB-tcpdump - is a set of functions that are used to anonymize a packetflow trace in 
+		libpcap or tcpdump format so that it can be used to collaborate or release
+		without jeapordizing the anonymity of the network represented by the capture
+		flow. SCRUB-tcpdump allows the user to select from a variety of options for 
+		anonymizing fields like the ports, IP addresses, time-stamps, transport 
+		protocols, flags, options, etc.-> http://scrub-tcpdump.sourceforge.net/
+		*MANY GOOD PUBLICATIONS ALSO
+
+
+TCPdpriv - tcpdump option -w -> http://ita.ee.lbl.gov/html/contrib/tcpdpriv.html
+
+
+k-anonymity - Some algorithms to removal indentifying data (general sensitive data, not security related, but good algorithms documentation)-> http://spdp.dti.unimi.it/papers/k-Anonymity.pdf
+
+
+CANINE is Netflow datagrams convertor and anonymizer. NetFlow tools often struggle with:
+	1. NetFlows come in many different, incompatible formats,
+	2. the sensitivity of NetFlow logs can hinder the sharing of these logs and thus 
+	make it difficult for developers to get real data to use. 
+
+	Canine attempts to solve this two problems. 
+
+	Publications -> http://www.slagell.info/Adam_J._Slagell/Publications_files/luo05.pdf
+			http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.60.892&rep=rep1&type=pdf
+	
+	Download -> The page was removed, maybe we can mail authors {slagell, yifan, xluo1}@ncsa.uiuc.edu
+
+	
+PktAnon-A Generic Framework for Profile-based Traffic Anonymization, it
+	performs network trace anonymization. It is highly configurable and uses anonymization profiles. 
+	Anonymization profiles allow for mapping of arbitrary anonymization primitives to protocol attributes, 
+	thus providing high flexibility and easy usability. A huge number of anonymization primitives and 
+	network protocols are supported and ready to use for online and offline anonymization. 
+
+	http://www.tm.uka.de/software/pktanon/
+	Publication -> http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.151.4726&rep=rep1&type=pdf
+
+AnonTool - Anonymization Application Programming Interface (AAPI) 
+	AnonTool is an open-source implementation of the Anonymization API (AAPI), which provides an easy to
+	use, flexible, and efficient set of functions for network traffic anonymization. AnonTool operates
+	either on live traffic or on captured packet traces in the tcpdump format. Currently AnonTool supports
+	selective anonymization for the fields of the following protocols: IP, TCP/UDP, HTTP, FTP, Netflow v5
+	and v9. Three applications have been implemented on top of this library. One provides basic
+	anonymization functionality for the IP/TCP/UDP protocols, while two others anonymize version 5 and
+	version 9 Netflow datagrams, respectively. 
+	http://www.ics.forth.gr/dcs/Activities/Projects/anontool.html
+
+LOBSTER project, some tools and methods for anonymization are implemented.
+	Anonymization is a core part of the LOBSTER infrastructure. It provides a large set of anonymization
+	primitives that can be applied up to the application layer. Primitives include hashing (MD5, SHA,
+	CRC32, AES and DES algorithms), mapping to sequential values, replace with constant, mapping based on
+	distribution functions (uniform and Gaussian), prefix preserving (for IP addresses), regular
+	expression substitution, checksum adjust (for all protocols) and removal of fields (for application
+	level protocols), thus providing adequate functionality for every user needs. Functions can be applied
+	to any field of most common protocols such as IP, TCP, UDP, ICMP, HTTP or FTP. Anonymization can also
+	be transparently applied to streams rather than raw packets. The administrator is able to define
+	practically any anonymization policy that will be forced to network packets. The anonymization
+	function is currently part of the LOBSTER software. 
+
+ARGUS
+ranonymize - anonymize argus data fields. 
+        Ranonymize reads argus data from an argus-data source, strips out fields, using the same strategies as rastrip(1) 
+        and anonymizes the remaining fields in Argus records, including the network addresses, protocol specific 
+        port numbers, timestamps, transaction reference numbers, TCP base sequence numbers, IP identifiers, and the 
+        record sequence numbers. 
+        http://www.qosient.com/argus/anonymization.shtml
+
+
+/*---------------------------------------------------------------------*/
+		attacks against network log anonymization
+
+
+
+A framework to verify disclosure risk of anonymized data. Paper ->http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.96.4556&rep=rep1&type=pdf
+or https://www.cert.org/flocon/2008/presentations/Bezzi_Kounine_Flocon.pdf
+
+Taming the Devil: Techniques for Evaluating Anonymized Network Data  -> 
+http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.71.9687&rep=rep1&type=pdf
+
+
+A taxonomy and adversarial model for attacks against network log anonymization - Flaim authors
+http://portal.acm.org/citation.cfm?id=1529282.1529572&coll=GUIDE&dl=GUIDE&CFID=91703642&CFTOKEN=69293326
+
+
+/*---------------------------------------------------------------------*/
+		Search threats in anonymized data (Effectiveness)
+
+A recent flaim validation -> A taxonomy and adversarial model for attacks against network log anonymization
+http://portal.acm.org/citation.cfm?id=1460877.1460899&coll=GUIDE&dl=GUIDE&CFID=91703642&CFTOKEN=69293326
+
+
+Another recent paper employees an analogous aproach of FLAIM, but it is to different type of utility measure. Authors are investigating the affects of data sanitization on tools wich detect insider threats from specialized syslog data. -> 
+
+

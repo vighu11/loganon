@@ -1,0 +1,29 @@
+      ___       ___           ___           ___           ___           ___           ___ 
+     /\__\     /\  \         /\  \         /\  \         /\__\         /\  \         /\__\
+    /:/  /    /::\  \       /::\  \       /::\  \       /::|  |       /::\  \       /::|  | 
+   /:/  /    /:/\:\  \     /:/\:\  \     /:/\:\  \     /:|:|  |      /:/\:\  \     /:|:|  |
+  /:/  /    /:/  \:\  \   /:/  \:\  \   /::\~\:\  \   /:/|:|  |__   /:/  \:\  \   /:/|:|  |__ 
+ /:/__/    /:/__/ \:\__\ /:/__/_\:\__\ /:/\:\ \:\__\ /:/ |:| /\__\ /:/__/ \:\__\ /:/ |:| /\__\
+ \:\  \    \:\  \ /:/  / \:\  /\ \/__/ \/__\:\/:/  / \/__|:|/:/  / \:\  \ /:/  / \/__|:|/:/  /
+  \:\  \    \:\  /:/  /   \:\ \:\__\        \::/  /      |:/:/  /   \:\  /:/  /      |:/:/  /
+   \:\  \    \:\/:/  /     \:\/:/  /        /:/  /       |::/  /     \:\/:/  /       |::/  / 
+    \:\__\    \::/  /       \::/  /        /:/  /        /:/  /       \::/  /        /:/  /
+     \/__/     \/__/         \/__/         \/__/         \/__/         \/__/         \/__/ 
+
+ASCII Art generated using: http://www.network-science.de/ascii/
+
+LogAnon is a log anonymization project that targets anyone who wants to share logs but is scared to do so because
+it may contain sensitive data. 
+
+Please note this project is just a hobby, won't be big and professional like FLAIM (http://flaim.ncsa.illinois.edu).
+
+LogAnon mission statement are:
+* Can anonymize various logs at glance in a consistent manner: IPs appearing in a PCAP and in Syslog will be
+anonymized equally
+* Provide a simple API
+* Core written in C, Python bindings
+* Cross platform
+
+
+
+
