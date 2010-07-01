@@ -1,19 +1,6 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <dumbnet.h>
-//nclude <math.h>
-
+#include <loganon/ip_anon.h>
 #include <loganon/random.h>
 
-char * truncation ( char *, int);
-char * black_marker(char *, int );
-void swap(char *, int , int );
-char * random_permutation();
-
-
-struct addr * ipv4_black_marker (struct addr, int);
-struct addr * ipv4_field_rotation (struct addr, int);
 
 int loganon_ip_anon (int argc, char *argv[]){
   int i = 0,j=0;
@@ -22,16 +9,21 @@ int loganon_ip_anon (int argc, char *argv[]){
   struct addr ip,*newip;
   char * buffer;
 
+  struct ip_table *history;
+
+
   loganon_random_ultraweak_symkey(key,14);
 	if (argc > 1){
 		for ( i=1; i < argc;i++) { 
 			printf("Argument %d -> %s\n", i,argv[i]);
 
-
+  
       
       addr_aton(argv[i],&ip);
       printf("Network Format %u\n", ip.addr_ip);
 
+
+      ipv4_coherently_anon(ip);
 
       //Field Black Marker
       newip = ipv4_black_marker(ip,1);
@@ -61,7 +53,32 @@ int loganon_ip_anon (int argc, char *argv[]){
 }
 
 
+
 /* Working with libdumbnet */
+
+struct addr * ipv4_coherently_anon (struct addr ip){
+	unsigned long int index1,index2,index3,index4;
+		
+	index1 = ip.addr_ip & 0x000000FF;
+	index2 = ip.addr_ip & 0x0000FFFF;
+	index3 = ip.addr_ip & 0x00FFFFFF;
+	index4 = ip.addr_ip;
+	
+	struct addr *newip = malloc(sizeof(struct addr));
+	memcpy (newip,&ip,sizeof(ip)); //copying the original ip
+	newip->addr_ip = index1;
+	printf("\t%s Field 1\n", addr_ntoa(newip));
+	free(newip);
+	return NULL;
+}
+
+
+
+
+
+
+
+//Black Marker
 struct addr * ipv4_black_marker (struct addr ip, int fields){
   unsigned long int expr1=0xFFFFFFFF, expr2=0;
   struct addr *newip = malloc(sizeof(struct addr));
@@ -168,3 +185,20 @@ char * random_permutation(){
 	strcpy(result_pointer, result);
 	return result_pointer;
 }
+
+
+
+
+
+//########################################################################
+//HASH TABLE STUFF
+//*******TODO: Make some files and put code below there =)
+//	- writing here to not bother with cmake stuff
+//
+//#######################################################################
+
+
+
+
+
+
