@@ -57,9 +57,10 @@ int8_t insertNewIP(const char* original, struct ip_anon** list)
 		current = current->next_ip;
 	}
 
-
 	/* Save original ip */
 	if(strlen(original) > IP_ADDR_LEN) {
+
+		/* Should never happen... */
 
 		strncpy(current->ip_original, original, IP_ADDR_LEN);
 		/* Add null on last position */
@@ -74,4 +75,17 @@ int8_t insertNewIP(const char* original, struct ip_anon** list)
 	current->next_ip = NULL;
 
 	return LIST_SUCCESS;
+}
+
+/*
+ * Free all IPs inserted in list
+ */
+void freeListIPs(struct ip_anon *list)
+{
+	if(list) {
+
+		/* Recursive */
+		freeListIPs(list->next_ip);
+		free(list);
+	}
 }

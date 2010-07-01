@@ -17,4 +17,9 @@
  */
 int8_t insertNewIP(const char* original, struct ip_anon** list);
 
+/*
+ * Free all IPs inserted in list
+ */
+void freeListIPs(struct ip_anon *list);
+
 #endif

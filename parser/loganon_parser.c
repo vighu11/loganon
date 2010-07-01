@@ -45,3 +45,9 @@ int8_t initLoganon(const char *filename)
 
 	return ANON_SUCCESS;
 }
+
+void terminateLoganon()
+{
+	/* TODO: Check type of log before freeing */
+	anonPcapFree(ip_list);
+}
