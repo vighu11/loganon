@@ -4,6 +4,7 @@
  */
 
 #include <pcap.h>
+#include <assert.h>
 #include <inttypes.h>
 
 #include "debug_utils.h"
@@ -14,7 +15,7 @@
 
 
 /* Pcap file handle */
-static pcap_t *handle; 
+static pcap_t *handle = NULL; 
 
 
 static void displayIPsFound(struct ip_anon *ips)
@@ -74,8 +75,18 @@ int8_t anonPcapSearchSensitiveData(struct ip_anon** ips)
 		insertNewIP(inet_ntoa(*ip_addr), ips);
  	}
 
-	/* Display all entries (for debug) */
+	/* Display all entries for debug */
 	displayIPsFound(*ips);
 
 	return ANON_SUCCESS;
+}
+
+void anonPcapFree(struct ip_anon *ips)
+{
+	assert(handle != NULL);
+
+	pcap_close(handle);
+
+	/* Free list */
+	freeListIPs(ips);
 }

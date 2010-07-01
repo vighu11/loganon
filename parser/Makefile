@@ -29,7 +29,7 @@ loganon_queue.o: loganon_queue.c loganon_queue.h
 #
 # HEADER FILES
 #
-loganon_queue.h: loganon_structs.h
+loganon_queue.h: loganon_structs.h loganon_errors.h
 
 loganon_parser.h: loganon_errors.h
 

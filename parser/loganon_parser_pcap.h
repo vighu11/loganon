@@ -21,4 +21,6 @@ int8_t anonPcapOpen(const char *filename);
  */
 int8_t anonPcapSearchSensitiveData(struct ip_anon* ips);
 
+void anonPcapFree(struct ip_anon *ips);
+
 #endif

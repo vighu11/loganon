@@ -9,5 +9,7 @@ int main(int argc, char *argv[])
 
 	initLoganon(argv[1]);
 
+	terminateLoganon();
+
 	return 0;
 }

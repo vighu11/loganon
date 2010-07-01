@@ -16,4 +16,6 @@
  */
 int8_t initLoganon(const char *filename);
 
+void terminateLoganon();
+
 #endif
