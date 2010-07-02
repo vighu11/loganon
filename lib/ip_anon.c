@@ -1,5 +1,10 @@
 #include <loganon/ip_anon.h>
 #include <loganon/random.h>
+#include <openssl/lhash.h>
+
+
+
+
 
 
 int loganon_ip_anon (int argc, char *argv[]){
@@ -13,52 +18,135 @@ int loganon_ip_anon (int argc, char *argv[]){
 
 
   loganon_random_ultraweak_symkey(key,14);
+  struct node *ip_list = (struct node *) new_ip_list();
+  ip_list->prox = NULL;
+  ip_list->index = 0;
+  ip_list->field_value=0;
 	if (argc > 1){
 		for ( i=1; i < argc;i++) { 
 			printf("Argument %d -> %s\n", i,argv[i]);
 
   
       
-      addr_aton(argv[i],&ip);
-      printf("Network Format %u\n", ip.addr_ip);
-
-
-      ipv4_coherently_anon(ip);
-
-      //Field Black Marker
-      newip = ipv4_black_marker(ip,1);
-      printf("\t Field Black Marker -> 1 field:  %s\n", addr_ntoa(newip));
-
-      newip = ipv4_black_marker(ip,2);
-      printf("\t Field Black Marker -> 2 fields:  %s\n", addr_ntoa(newip));
-     
-      //Fields Rotation Test
-
-      newip=ipv4_field_rotation(ip,1);
-      printf("\t Field Bit rotation -> 1 fields:  %s\n", addr_ntoa(newip));      
-      
-      
-
-      printf("\n\t String Operations also implemented\n\n");
-			printf("\t Truncated: %s\n", (char *) truncation(argv[i], 5)); /* leave 5 */
-			printf("\t Random Permutation (need hash tables to not duplicate: %s\n", (char *) random_permutation()); /* 3 for last field, 2 for two last fields, 1 for 3 last fields and 0 for all fields */
+			addr_aton(argv[i],&ip);
+			printf("Network Format %u\n", ip.addr_ip);
+			
+			
+			ipv4_coherently_anon(ip,ip_list);
+			
+			//Field Black Marker
+			newip = ipv4_black_marker(ip,1);
+			printf("\t Field Black Marker -> 1 field:  %s\n", addr_ntoa(newip));
+			
+			newip = ipv4_black_marker(ip,2);
+			printf("\t Field Black Marker -> 2 fields:  %s\n", addr_ntoa(newip));
+			
+			//Fields Rotation Test
+			
+			newip=ipv4_field_rotation(ip,1);
+			printf("\t Field Bit rotation -> 1 fields:  %s\n", addr_ntoa(newip));      
+			
+			
+			
+			printf("\n\t String Operations also implemented\n\n");
+					printf("\t Truncated: %s\n", (char *) truncation(argv[i], 5)); /* leave 5 */
+					printf("\t Random Permutation (need hash tables to not duplicate: %s\n", (char *) random_permutation()); 
+					/* 3 for last field, 2 for two last fields, 1 for 3 last fields and 0 for all fields */
 			backup = malloc(sizeof(char) * strlen(argv[i]));
 			strcpy(backup, argv[i]);
 			printf("\t Black marked with 2 fields: %s\n", (char *) black_marker(argv[i],2)); /* 3 for last field, 2 for two last fields, 1 for 3 last fields and 0 for all fields */
- 			free(backup);
-     
+			free(backup);
+	     
 
-      }
+		}
     }
+}
+
+
+
+/* linked list functions */
+struct node * new_ip_list (){
+	return (struct node *) malloc(sizeof(struct node));
+}
+
+unsigned long int search_and_insert(unsigned long int value, struct node * head, struct node * current,struct node * last){
+
+	if (current == NULL){
+		current = malloc(sizeof(struct node));
+		current->prox=NULL;
+		current->field_value=new_unique_ip(head);
+		last->prox=current;
+		return current->field_value;
+	}
+
+
+
+	if (current->index == value){
+		put_on_top(head,current,last);
+		return current->field_value;
+	}
+	else{
+		if(current->prox!=NULL){
+			return search_and_insert(value, head, (struct node *) current->prox, current);
+			}
+		else{
+			struct node *new_node = malloc(sizeof(struct node));
+			new_node->prox =  NULL;
+			new_node->index = value;
+			new_node->field_value = new_unique_ip(head);
+			last->prox=new_node;
+			return new_node->field_value;
+		
+		}
+	
+	
+	}
+
+}
+
+unsigned long int new_unique_ip(struct node * head){
+	unsigned long int newValue = 0;
+
+	newValue = loganon_random_ip();
+	while(search(head,newValue) == -1)
+		newValue = loganon_random_ip();
+	return newValue;
+
+
+
+}
+
+int search(struct node *head, unsigned long int value){
+	if (head == NULL)
+		return 0;
+
+
+	if (head->field_value == value) return -1;
+	else return search((struct node *) head->prox, value);
+}
+
+
+
+
+
+
+void put_on_top(struct node * head, struct node * current, struct node * last){
+
+
+	if(head->prox != last->prox){
+		last->prox=current->prox;
+		current->prox = head->prox;
+		head->prox=current;
+		}
+
 }
 
 
 
 /* Working with libdumbnet */
 
-struct addr * ipv4_coherently_anon (struct addr ip){
+struct addr * ipv4_coherently_anon (struct addr ip, struct node *head){
 	unsigned long int index1,index2,index3,index4;
-		
 	index1 = ip.addr_ip & 0x000000FF;
 	index2 = ip.addr_ip & 0x0000FFFF;
 	index3 = ip.addr_ip & 0x00FFFFFF;
@@ -66,9 +154,10 @@ struct addr * ipv4_coherently_anon (struct addr ip){
 	
 	struct addr *newip = malloc(sizeof(struct addr));
 	memcpy (newip,&ip,sizeof(ip)); //copying the original ip
-	newip->addr_ip = index1;
+	newip->addr_ip = search_and_insert(ip.addr_ip, head, head->prox, head);
 	printf("\t%s Field 1\n", addr_ntoa(newip));
 	free(newip);
+	
 	return NULL;
 }
 
