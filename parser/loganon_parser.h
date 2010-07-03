@@ -12,10 +12,22 @@
 
 /*
  * Open file for anonymization
+ * @param filename name of file we want anonymize
+ * @param filenameOut name of new file after anonymization
  * @return ANON_FAIL if file doesn't exist or is unsupported
  */
-int8_t initLoganon(const char *filename);
+int8_t initLoganon(const char *filenameIn, const char *filenameOut);
 
-void terminateLoganon();
+/*
+ * Apply anonymization on sensitive data
+ * @param level level of anonymization
+ */
+int8_t loganonAnonymize(uint8_t level);
+
+/*
+ * Close handles and free memory
+ * @return ANON_FAIL if no file has been successfully opened
+ */
+int8_t terminateLoganon();
 
 #endif
