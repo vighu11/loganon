@@ -35,7 +35,7 @@ int loganon_ip_anon (int argc, char *argv[]){
 			ipv4_coherently_anon(ip,ip_list);
 			
 			//Field Black Marker
-			newip = ipv4_black_marker(ip,1);
+			/*newip = ipv4_black_marker(ip,1);
 			printf("\t Field Black Marker -> 1 field:  %s\n", addr_ntoa(newip));
 			
 			newip = ipv4_black_marker(ip,2);
@@ -50,12 +50,12 @@ int loganon_ip_anon (int argc, char *argv[]){
 			
 			printf("\n\t String Operations also implemented\n\n");
 					printf("\t Truncated: %s\n", (char *) truncation(argv[i], 5)); /* leave 5 */
-					printf("\t Random Permutation (need hash tables to not duplicate: %s\n", (char *) random_permutation()); 
+	//				printf("\t Random Permutation (need hash tables to not duplicate: %s\n", (char *) random_permutation()); 
 					/* 3 for last field, 2 for two last fields, 1 for 3 last fields and 0 for all fields */
-			backup = malloc(sizeof(char) * strlen(argv[i]));
+			/*backup = malloc(sizeof(char) * strlen(argv[i]));
 			strcpy(backup, argv[i]);
 			printf("\t Black marked with 2 fields: %s\n", (char *) black_marker(argv[i],2)); /* 3 for last field, 2 for two last fields, 1 for 3 last fields and 0 for all fields */
-			free(backup);
+			//free(backup);
 	     
 
 		}
@@ -65,27 +65,35 @@ int loganon_ip_anon (int argc, char *argv[]){
 
 
 /* linked list functions */
-struct node * new_ip_list (){
-	return (struct node *) malloc(sizeof(struct node));
+struct node *new_ip_list (){
+	struct node * tmp;
+	tmp = (struct node *) malloc(sizeof(struct node));
+	tmp->index = tmp->field_value = 0;
+	tmp->prox=NULL;
 }
 
 unsigned long int search_and_insert(unsigned long int value, struct node * head, struct node * current,struct node * last){
 
+	//printf("\nValue -> %lu",value);
 	if (current == NULL){
 		current = malloc(sizeof(struct node));
 		current->prox=NULL;
+		current->index=value;
 		current->field_value=new_unique_ip(head);
 		last->prox=current;
 		return current->field_value;
 	}
 
 
+	//printf("\nIndex -> %lu",current->index);
 
 	if (current->index == value){
+		printf("\n\nMATCH! \n");
 		put_on_top(head,current,last);
 		return current->field_value;
 	}
 	else{
+	//	printf("\nHERE!");
 		if(current->prox!=NULL){
 			return search_and_insert(value, head, (struct node *) current->prox, current);
 			}
@@ -94,7 +102,7 @@ unsigned long int search_and_insert(unsigned long int value, struct node * head,
 			new_node->prox =  NULL;
 			new_node->index = value;
 			new_node->field_value = new_unique_ip(head);
-			last->prox=new_node;
+			current->prox=new_node;
 			return new_node->field_value;
 		
 		}
@@ -117,8 +125,9 @@ unsigned long int new_unique_ip(struct node * head){
 }
 
 int search(struct node *head, unsigned long int value){
-	if (head == NULL)
-		return 0;
+	if (head == NULL){
+		//printf("\n\t\t First execution paused %lu ",value);
+		return 0;}
 
 
 	if (head->field_value == value) return -1;

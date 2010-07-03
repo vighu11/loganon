@@ -18,17 +18,23 @@ void loganon_random_ultraweak_symkey(char *s, const int len) {
 }
 
 unsigned long int loganon_random_ip(){
+
+	int r;
+	int num;
+	time_t now = time(NULL);
+	if (now == (time_t) -1) {
+		  /* handle error */
+	  }
+	 srandom(now); 
+
+
 	unsigned long int field1=0, field2=0,field3=0,field4=0;
-	srand ( time(NULL) );
-	field1 = rand() % 254;
-	srand ( time(NULL) );
-	field2 = rand() % 254 << 8;
-	srand ( time(NULL) );
-	field3 = rand() % 254 << 16;
-	srand ( time(NULL) );
-	field4 = rand() % 254 << 24;
+	//field1 = (random() % 254);
+	//field2 = (random() % 254 )<< 8;
+	//field3 = (random() % 254 )<< 16;
+	field4 = (random() % 4294967295 );
     /* generate secret number: */
-	return field1+field2+field3+field4;    	
+	return field4;    	
 
 
 }
