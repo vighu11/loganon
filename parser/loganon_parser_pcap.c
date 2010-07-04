@@ -59,6 +59,28 @@ static inline int8_t openPcapFile(const char *filename)
 	return ANON_SUCCESS;
 }
 
+static inline void getIPAddresses(struct in_addr **ipsrc, struct in_addr **ipdst,
+							const u_char *packet)
+{
+	u_char *pkt_ptr = (u_char *)packet;
+
+	*ipdst = NULL;
+	*ipsrc = NULL;
+
+     	/* Retrieve EtherType from ethernet packet */
+	uint16_t ether_type = GET_ETHERTYPE(pkt_ptr);
+
+	/* Compute offset of IP datagram */
+	if(ether_type == ETHER_TYPE_IP) {
+
+		*ipsrc = GET_IPSRC(pkt_ptr, 14);
+	}
+     	else if(ether_type == ETHER_TYPE_8021Q) {
+
+		*ipsrc = GET_IPSRC(pkt_ptr, 18);
+	}
+}
+
 /*
  * Open pcap file in offline mode
  * @param filenameIn name of file we want anonymize
@@ -76,10 +98,12 @@ int8_t anonPcapOpen(const char *filenameIn, const char *filenameOut)
 
 	/* Allocate memory for filenameIn*/
 	g_filenameIn = malloc(strlen(filenameIn) + 1);
+
 	assert(g_filenameIn != NULL);
 
 	/* Allocate memory for filenameOut */
 	g_filenameOut = malloc(strlen(filenameOut) + 1);
+
 	assert(g_filenameOut != NULL);
 
 	/* Copy files names */
@@ -101,24 +125,20 @@ int8_t anonPcapSearchSensitiveData(struct ip_anon** ips)
 	/* Buffer for packets */
 	const u_char *packet;
 
+	/* Number of packets */
+	uint8_t num = 1;
+
    	while((packet = pcap_next(handleR, &header))) {
 
-		u_char *pkt_ptr = (u_char *)packet;
+		struct in_addr *ip_addr_src, *ip_addr_dst;
 
-      		/* Retrieve EtherType from ethernet packet */
- 		uint16_t ether_type = GET_ETHERTYPE(pkt_ptr);
-
-		struct in_addr *ip_addr = NULL;
-		/* Compute offset of IP datagram */
-		if(ether_type == ETHER_TYPE_IP) {
-			ip_addr = GET_IPSRC(pkt_ptr, 14);
-		}
-     		else if(ether_type == ETHER_TYPE_8021Q) {
-			ip_addr = GET_IPSRC(pkt_ptr, 18);
-		}
+		/* Retrieve addresses from packet */
+		getIPAddresses(&ip_addr_src, &ip_addr_dst, packet);
 
 		/* Add new IP into the list if necessary */
-		insertNewIP(inet_ntoa(*ip_addr), ips);
+		insertNewIP(num, inet_ntoa(*ip_addr_src), ips);
+
+		num++;
  	}
 
 	/* Display all entries for debug */
@@ -128,6 +148,31 @@ int8_t anonPcapSearchSensitiveData(struct ip_anon** ips)
 	pcap_close(handleR);
 
 	return ANON_SUCCESS;
+}
+
+/*
+ * Perform anonymization on sensitive data previously retrieved
+ */
+static void anonPcapCallback(u_char *user, struct pcap_pkthdr *phdr, 
+						u_char *pdata)
+{
+	print_debug(DBG_LOW_LVL, "New packet processed!\n");
+
+	/* Number of packets */
+	uint8_t num = 1;
+
+	struct in_addr *ip_addr_src, *ip_addr_dst;
+
+	/* Retrieve IP addresses */
+	getIPAddresses(&ip_addr_src, &ip_addr_dst, pdata);
+
+	/* TODO:
+	 * Change IP address for test, use ips linked list
+	 */
+	ip_addr_src->s_addr = inet_addr("1.2.3.4");
+	
+	/* Dump new packet (anonymized) */
+	pcap_dump(user, phdr, pdata);
 }
 
 /*
@@ -145,8 +190,8 @@ int8_t anonPcapWriteAnonymizedData(struct ip_anon *ips)
 	handleW = pcap_dump_open(handleR, g_filenameOut);
 	if(!handleW) {
 
-		print_debug(DBG_HIG_LVL, "pcap_dump_open error: %s\n", 
-						pcap_geterr((struct pcap_t*)handleW));
+		print_debug(DBG_HIG_LVL, "pcap_dump_open error: %s\n",
+					pcap_geterr(handleR));
 
 		/* Free handle previously opened */
 		pcap_close(handleR);
@@ -154,7 +199,20 @@ int8_t anonPcapWriteAnonymizedData(struct ip_anon *ips)
 		return ANON_FAIL;
 	}
 
-	/* TODO: Process each packet */
+	/* Process each packet */
+	ret = pcap_dispatch(handleR, 0, (pcap_handler)anonPcapCallback,
+					(u_char *)handleW);
+	if(ret == -1) {
+
+		print_debug(DBG_HIG_LVL, "pcap_dispatch error: %s\n",
+					pcap_geterr(handleR));
+
+		/* Free opened handles */
+		pcap_close(handleR);
+		pcap_dump_close(handleW);
+
+		return ANON_FAIL;
+	}
 
 	return ANON_SUCCESS;
 }
@@ -165,11 +223,16 @@ int8_t anonPcapWriteAnonymizedData(struct ip_anon *ips)
  */
 void anonPcapFree(struct ip_anon *ips)
 {
-	assert((handleR != NULL) & (handleW != NULL));
-
 	/* Close handles */
-	pcap_close(handleR);
-	pcap_dump_close(handleW);
+	if(handleR)
+		pcap_close(handleR);
+
+	if(handleW)
+		pcap_dump_close(handleW);
+
+	/* Free memory for files names */
+	free(g_filenameOut);
+	free(g_filenameIn);
 
 	/* Free list */
 	freeListIPs(ips);

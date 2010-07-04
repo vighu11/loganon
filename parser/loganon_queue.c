@@ -34,7 +34,7 @@ static int8_t checkIfIPExists(const char* original, struct ip_anon* list)
  * Insert a new IP in list cheking if it's a new IP or not
  * @return LIST_EXIST if IP has already been inserted, otherwise LIST_SUCCESS
  */
-int8_t insertNewIP(const char* original, struct ip_anon** list)
+int8_t insertNewIP(uint8_t numPacket, const char *original, struct ip_anon **list)
 {
 	struct ip_anon *current = *list;
 
@@ -78,6 +78,7 @@ int8_t insertNewIP(const char* original, struct ip_anon** list)
 		current->ip_original[strlen(original)] = '\0';
 	}
 
+	current->packet_num = numPacket;
 	current->next_ip = NULL;
 
 	return LIST_SUCCESS;

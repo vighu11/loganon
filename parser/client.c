@@ -4,6 +4,7 @@
 #include "loganon_parser.h"
 #include "loganon_parser_pcap.h"
 
+/* Usage */
 void usage(const char *prog)
 {
 	printf("** Test program for the parser\n" \
@@ -14,7 +15,8 @@ void usage(const char *prog)
 
 int main(int argc, char *argv[])
 {
-	if(argc < 3) usage(argv[0]);
+	if(argc < 3) 
+		usage(argv[0]);
 
 	/* Loganon initialization */
 	initLoganon(argv[1], argv[2]);
