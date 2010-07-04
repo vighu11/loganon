@@ -1,6 +1,6 @@
 CC=gcc
 EXEC=client
-CFLAGS=-Wall -O3
+CFLAGS=-Wall -O3 -g
 LDFLAGS=-lpcap
 
 all: $(EXEC)

@@ -22,6 +22,13 @@
 #define GET_IPSRC(pkt, off) \
 	&(((struct ip*)(pkt+off))->ip_src)
 
+/*
+ * Retrieve IP_dst field from IP datagram
+ * off is computed according to EtherType
+ */
+#define GET_IPDST(pkt, off) \
+	&(((struct ip*)(pkt+off+4))->ip_src)
+
 
 /* EtherType values */
 #define ETHER_TYPE_IP	 0x0800

@@ -64,6 +64,9 @@ int8_t initLoganon(const char *filenameIn, const char *filenameOut)
  */
 int8_t loganonAnonymize(uint8_t level)
 {
+	/* TODO: Use EscoVa's functions */
+
+	/* Write pcap file with anonymized data */
 	anonPcapWriteAnonymizedData(ip_list);
 
 	return ANON_SUCCESS;
@@ -88,7 +91,7 @@ int8_t terminateLoganon()
 		default:
 			/* Should nvere happen */
 			print_debug(DBG_HIG_LVL, "Internal error: %s %u\n",
-							__FILE__, __LINE__);
+									__FILE__, __LINE__);
 
 			return ANON_FAIL;
 	}

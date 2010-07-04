@@ -15,7 +15,7 @@
  * Insert a new IP in list
  * @return -1 if insertion fails, 0 if IP is already inserted, otherwise 1
  */
-int8_t insertNewIP(const char* original, struct ip_anon** list);
+int8_t insertNewIP(uint8_t numPacket, const char* original, struct ip_anon** list);
 
 /*
  * Free all IPs inserted in list
