@@ -1,7 +1,6 @@
 #include <loganon/ip_anon.h>
 #include <loganon/random.h>
-#include <openssl/lhash.h>
-
+#include <uthash/uthash.h>
 
 
 
@@ -22,6 +21,12 @@ int loganon_ip_anon (int argc, char *argv[]){
   ip_list->prox = NULL;
   ip_list->index = 0;
   ip_list->field_value=0;
+
+  struct ip_node *hash_table = create_hash_table();
+
+
+
+
 	if (argc > 1){
 		for ( i=1; i < argc;i++) { 
 			printf("Argument %d -> %s\n", i,argv[i]);
@@ -33,6 +38,10 @@ int loganon_ip_anon (int argc, char *argv[]){
 			
 			
 			ipv4_coherently_anon(ip,ip_list);
+			printf("Crashed main \n");
+
+			using_hash_anon(hash_table,ip.addr_ip);
+
 			
 			//Field Black Marker
 			/*newip = ipv4_black_marker(ip,1);
@@ -296,7 +305,39 @@ char * random_permutation(){
 //#######################################################################
 
 
+struct ip_node *create_hash_table(){
+	struct ip_node *temp = NULL;
+	return temp;
+}
+
+int add_to_hash(unsigned long int key, unsigned long int newValue){
+	return 0;
+
+} 
+
+struct ip_node *create_a_node(unsigned long int key, unsigned long int newValue){
+	struct ip_node *node = NULL;
+	memset(node, 0, sizeof(struct ip_node)); /* The documentation of uthash requires zero fill */
+	node->index = key;
+	node->newValue = newValue;
+	return node;
+
+}
+
+unsigned long int using_hash_anon(struct ip_node *hash_table, unsigned long int index){
+	printf("Crash\n");
+	struct ip_node *tmp, *newNode = NULL;
+
+	printf("Crashed!\n");
+	newNode = create_a_node(index,index);
+	HASH_ADD_INT(hash_table, index, newNode);
+	HASH_FIND_INT(hash_table, &index, tmp);
+	if (tmp)
+		printf("Founded");
+
+
+}
 
 
 
-
+/* Working with UTHASH */
