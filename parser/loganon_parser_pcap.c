@@ -167,7 +167,7 @@ static void anonPcapCallback(u_char *user, struct pcap_pkthdr *phdr,
 	getIPAddresses(&ip_addr_src, &ip_addr_dst, pdata);
 
 	/* TODO:
-	 * Change IP address for test, use ips linked list
+	 * Apply anonymized data from linked lists
 	 */
 	ip_addr_src->s_addr = inet_addr("1.2.3.4");
 	
