@@ -74,10 +74,12 @@ static inline void getIPAddresses(struct in_addr **ipsrc, struct in_addr **ipdst
 	if(ether_type == ETHER_TYPE_IP) {
 
 		*ipsrc = GET_IPSRC(pkt_ptr, 14);
+		*ipdst = GET_IPDST(pkt_ptr, 14);
 	}
      	else if(ether_type == ETHER_TYPE_8021Q) {
 
 		*ipsrc = GET_IPSRC(pkt_ptr, 18);
+		*ipdst = GET_IPDST(pkt_ptr, 18);
 	}
 }
 
@@ -118,7 +120,7 @@ int8_t anonPcapOpen(const char *filenameIn, const char *filenameOut)
  * @param ips pointer on a pointer on the IPs list
  * @return ANON_FAIL if search fails, otherwise ANON_SUCCES
  */
-int8_t anonPcapSearchSensitiveData(struct ip_anon** ips)
+int8_t anonPcapSearchSensitiveData(struct ip_anon **ips)
 {
 	struct pcap_pkthdr header;
 
@@ -137,6 +139,7 @@ int8_t anonPcapSearchSensitiveData(struct ip_anon** ips)
 
 		/* Add new IP into the list if necessary */
 		insertNewIP(num, inet_ntoa(*ip_addr_src), ips);
+		insertNewIP(num, inet_ntoa(*ip_addr_dst), ips);
 
 		num++;
  	}
@@ -170,6 +173,7 @@ static void anonPcapCallback(u_char *user, struct pcap_pkthdr *phdr,
 	 * Apply anonymized data from linked lists
 	 */
 	ip_addr_src->s_addr = inet_addr("1.2.3.4");
+	ip_addr_dst->s_addr = inet_addr("5.6.7.8");
 	
 	/* Dump new packet (anonymized) */
 	pcap_dump(user, phdr, pdata);
