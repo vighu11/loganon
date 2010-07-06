@@ -10,6 +10,12 @@
 #include "loganon_queue.h"
 
 
+/*
+ * Check if an IP has already be found
+ * @param original original IP
+ * @param list pointer on the IPs list
+ * @return LIST_EXIST if IP is already known, otherwise LIST_SUCCESS
+ */
 static int8_t checkIfIPExists(const char* original, struct ip_anon* list)
 {
 	struct ip_anon *current = list;
@@ -25,10 +31,10 @@ static int8_t checkIfIPExists(const char* original, struct ip_anon* list)
 }
 
 /*
- * Insert a new IP in list
- * @return -1 if insertion fails, 0 if IP is already inserted, otherwise 1
+ * Insert a new IP in list cheking if it's a new IP or not
+ * @return LIST_EXIST if IP has already been inserted, otherwise LIST_SUCCESS
  */
-int8_t insertNewIP(const char* original, struct ip_anon** list)
+int8_t insertNewIP(uint8_t numPacket, const char *original, struct ip_anon **list)
 {
 	struct ip_anon *current = *list;
 
@@ -72,6 +78,7 @@ int8_t insertNewIP(const char* original, struct ip_anon** list)
 		current->ip_original[strlen(original)] = '\0';
 	}
 
+	current->packet_num = numPacket;
 	current->next_ip = NULL;
 
 	return LIST_SUCCESS;
@@ -79,6 +86,7 @@ int8_t insertNewIP(const char* original, struct ip_anon** list)
 
 /*
  * Free all IPs inserted in list
+ * @param list IPs list to free
  */
 void freeListIPs(struct ip_anon *list)
 {

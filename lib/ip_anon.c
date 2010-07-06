@@ -22,26 +22,27 @@ int loganon_ip_anon (int argc, char *argv[]){
   ip_list->index = 0;
   ip_list->field_value=0;
 
-  struct ip_node *hash_table = create_hash_table();
-
-
+  struct ip_node *hash_table = (struct ip_node *) create_hash_table();
+  struct addr *print_ip = NULL;
+  print_ip = (struct addr *)  malloc(sizeof(struct addr));
 
 
 	if (argc > 1){
 		for ( i=1; i < argc;i++) { 
-			printf("Argument %d -> %s\n", i,argv[i]);
+
+			printf("Argument %d -> %s\t", i,argv[i]);
 
   
       
 			addr_aton(argv[i],&ip);
-			printf("Network Format %u\n", ip.addr_ip);
+			printf("Network Format %u\t", ip.addr_ip);
 			
 			
-			ipv4_coherently_anon(ip,ip_list);
-			printf("Crashed main \n");
+//			ipv4_coherently_anon(ip,ip_list);
 
-			using_hash_anon(hash_table,ip.addr_ip);
-
+			memcpy (print_ip,&ip,sizeof(ip)); //copying the original ip;
+			print_ip->addr_ip = ipv4_hash_anon(hash_table,ip.addr_ip);
+			printf("\t HASH -> %s\t \n", addr_ntoa(print_ip));
 			
 			//Field Black Marker
 			/*newip = ipv4_black_marker(ip,1);
@@ -172,7 +173,7 @@ struct addr * ipv4_coherently_anon (struct addr ip, struct node *head){
 	
 	struct addr *newip = malloc(sizeof(struct addr));
 	memcpy (newip,&ip,sizeof(ip)); //copying the original ip
-	newip->addr_ip = search_and_insert(ip.addr_ip, head, head->prox, head);
+	newip->addr_ip = search_and_insert(ip.addr_ip, head, (struct node *) head->prox, head);
 	printf("\t%s Field 1\n", addr_ntoa(newip));
 	free(newip);
 	
@@ -306,7 +307,12 @@ char * random_permutation(){
 
 
 struct ip_node *create_hash_table(){
-	struct ip_node *temp = NULL;
+	struct ip_node *temp = NULL, *new =NULL;
+	new = (struct ip_node *) malloc(sizeof(struct ip_node));
+	memset(new, 0 , sizeof(struct ip_node));
+	new->index = 0;
+	new->newValue = 0;
+	HASH_ADD_INT(temp, index, new);
 	return temp;
 }
 
@@ -317,6 +323,7 @@ int add_to_hash(unsigned long int key, unsigned long int newValue){
 
 struct ip_node *create_a_node(unsigned long int key, unsigned long int newValue){
 	struct ip_node *node = NULL;
+	node = malloc(sizeof(struct  ip_node));
 	memset(node, 0, sizeof(struct ip_node)); /* The documentation of uthash requires zero fill */
 	node->index = key;
 	node->newValue = newValue;
@@ -324,19 +331,21 @@ struct ip_node *create_a_node(unsigned long int key, unsigned long int newValue)
 
 }
 
-unsigned long int using_hash_anon(struct ip_node *hash_table, unsigned long int index){
-	printf("Crash\n");
+unsigned long int ipv4_hash_anon(struct ip_node *hash_table, unsigned long int ind){
 	struct ip_node *tmp, *newNode = NULL;
-
-	printf("Crashed!\n");
-	newNode = create_a_node(index,index);
-	HASH_ADD_INT(hash_table, index, newNode);
-	HASH_FIND_INT(hash_table, &index, tmp);
-	if (tmp)
-		printf("Founded");
-
-
+	HASH_FIND_INT(hash_table, &ind, tmp);
+	if (tmp){
+		printf("***REPEATED***");
+		return tmp->newValue;
+		}
+	else{
+		//printf("\t");
+		newNode = (struct ip_node *) create_a_node(ind,loganon_random_ip());
+		HASH_ADD_INT(hash_table, index, newNode);
+		return newNode->newValue;
+		}
 }
+
 
 
 

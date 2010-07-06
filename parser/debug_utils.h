@@ -15,7 +15,7 @@
 #define DBG_HIG_LVL 3
 
 /*
- * Print debug message if level > DBG_LEVEL
+ * Print debug message if level >= DBG_LEVEL
  */
 #define print_debug(level, ...) \
 	if(level >= DBG_LEVEL)   \
