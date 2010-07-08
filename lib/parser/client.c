@@ -19,14 +19,14 @@ int main(int argc, char *argv[])
 		usage(argv[0]);
 
 	/* Loganon initialization */
-	initLoganon(argv[1], argv[2]);
+	loganon_init(argv[1], argv[2]);
 	
 	/* Anonymize sensitive data	
 	   Set level 1 for test */
-	loganonAnonymize(1);
+	loganon_anonymize(1);
 
 	/* Free memory and handles */
-	terminateLoganon();
+	loganon_terminate();
 
 	return 0;
 }

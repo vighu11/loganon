@@ -3,13 +3,13 @@
  *	Authors: Guillaume TOURON
  */
 
-#include <pcre.h>
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
 
+#include "loganon_pcre.h"
 #include "loganon_queue.h"
 #include "loganon_errors.h"
 
@@ -30,7 +30,7 @@ static char *g_filenameIn, *g_filenameOut;
  * @param filenameOut name of new file after anonymization
  * @return ANON_FAIL if file doesn't exist, otherwise ANON_SUCCESS
  */
-int8_t anonSyslogOpen(const char *filenameIn, const char *filenameOut)
+int8_t anon_syslog_open(const char *filenameIn, const char *filenameOut)
 {
 	/* Open syslog file for parsing */
 	handleR = fopen(filenameIn, "r");
@@ -62,7 +62,7 @@ int8_t anonSyslogOpen(const char *filenameIn, const char *filenameOut)
  * @param ips pointer on a pointer on the IPs list
  * @return ANON_FAIL if search fails, otherwise ANON_SUCCESS
  */
-int8_t anonSyslogSearchSensitiveData(struct ip_anon **ips)
+int8_t anon_syslog_search_data(struct ip_anon **ips)
 {
 	
 

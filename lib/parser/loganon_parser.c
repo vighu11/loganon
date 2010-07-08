@@ -30,7 +30,7 @@ static struct ip_anon *ip_list;
  * @param filenameOut name of new file after anonymization
  * @return ANON_FAIL if file doesn't exist or is unsupported
  */
-int8_t initLoganon(const char *filenameIn, const char *filenameOut)
+int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 {
 	int8_t ret;
 
@@ -39,7 +39,7 @@ int8_t initLoganon(const char *filenameIn, const char *filenameOut)
 		FileType = PCAP;
 
 		/* We parse a pcap file */
-		ret = anonPcapOpen(filenameIn, filenameOut);
+		ret = anon_pcap_open(filenameIn, filenameOut);
 		if(ret == ANON_FAIL) {
 
 			print_debug(DBG_HIG_LVL, "anonPcapOpen error\n");
@@ -47,7 +47,7 @@ int8_t initLoganon(const char *filenameIn, const char *filenameOut)
 		}
 
 		/* Search for sensitive data */
-		ret = anonPcapSearchSensitiveData(&ip_list);
+		ret = anon_pcap_search_data(&ip_list);
 		if(ret == ANON_FAIL) {
 
 			print_debug(DBG_HIG_LVL, "anonPcapSearchSensitiveData error\n");
@@ -62,12 +62,12 @@ int8_t initLoganon(const char *filenameIn, const char *filenameOut)
  * Apply anonymization on sensitive data
  * @param level level of anonymization
  */
-int8_t loganonAnonymize(uint8_t level)
+int8_t loganon_anonymize(uint8_t level)
 {
 	/* TODO: Use EscoVa's functions */
 
 	/* Write pcap file with anonymized data */
-	anonPcapWriteAnonymizedData(ip_list);
+	anon_pcap_write_data(ip_list);
 
 	return ANON_SUCCESS;
 }
@@ -76,7 +76,7 @@ int8_t loganonAnonymize(uint8_t level)
  * Close handles and free memory
  * @return ANON_FAIL if no file has been successfully opened
  */
-int8_t terminateLoganon()
+int8_t loganon_terminate()
 {
 	switch(FileType) {
 
@@ -85,7 +85,7 @@ int8_t terminateLoganon()
 
 		case PCAP:
 			/* Pcap file */
-			anonPcapFree(ip_list);
+			anon_pcap_free(ip_list);
 			break;
 
 		default:
