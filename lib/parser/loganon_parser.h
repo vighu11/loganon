@@ -16,18 +16,18 @@
  * @param filenameOut name of new file after anonymization
  * @return ANON_FAIL if file doesn't exist or is unsupported
  */
-int8_t initLoganon(const char *filenameIn, const char *filenameOut);
+int8_t loganon_init(const char *filenameIn, const char *filenameOut);
 
 /*
  * Apply anonymization on sensitive data
  * @param level level of anonymization
  */
-int8_t loganonAnonymize(uint8_t level);
+int8_t loganon_anonymize(uint8_t level);
 
 /*
  * Close handles and free memory
  * @return ANON_FAIL if no file has been successfully opened
  */
-int8_t terminateLoganon();
+int8_t loganon_terminate();
 
 #endif
