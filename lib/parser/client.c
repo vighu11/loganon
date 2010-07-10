@@ -15,12 +15,16 @@ void usage(const char *prog)
 
 int main(int argc, char *argv[])
 {
+	int8_t ret;
+
 	if(argc < 3) 
 		usage(argv[0]);
 
 	/* Loganon initialization */
-	loganon_init(argv[1], argv[2]);
-	
+	ret = loganon_init(argv[1], argv[2]);
+	if(ret == ANON_FAIL)
+		return -1;	
+
 	/* Anonymize sensitive data	
 	   Set level 1 for test */
 	loganon_anonymize(1);

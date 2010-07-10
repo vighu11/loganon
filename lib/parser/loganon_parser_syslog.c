@@ -35,7 +35,7 @@ int8_t anon_syslog_open(const char *filenameIn, const char *filenameOut)
 	/* Open syslog file for parsing */
 	handleR = fopen(filenameIn, "r");
 	if(!handleR) {
-		print_debug(DBG_HIG_LVL, "fopen error");
+		print_debug(DBG_HIG_LVL, "fopen error\n");
 		/* Return failure */
 		return ANON_FAIL; 
 	}
@@ -65,7 +65,29 @@ int8_t anon_syslog_open(const char *filenameIn, const char *filenameOut)
 extern
 int8_t anon_syslog_search_data(struct ip_anon **ips)
 {
-	
+	pcre_search_ip(ips, "ot3430ot 834, 3430 1337");
 
 	return ANON_SUCCESS;
+}
+
+/*
+ * Free all allocated memory
+ * @param ips pointer on the IPs list
+ */
+extern
+void anon_syslog_free(struct ip_anon *ips)
+{
+	/* Close handles */
+	if(handleR)
+		fclose(handleR);
+
+	if(handleW)
+		fclose(handleW);
+
+	/* Free memory for files names */
+	free(g_filenameOut);
+	free(g_filenameIn);
+
+	/* Free list */
+	freeListIPs(ips);
 }

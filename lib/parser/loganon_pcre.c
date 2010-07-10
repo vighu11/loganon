@@ -28,10 +28,10 @@ int8_t pcre_search_ip(struct ip_anon **ips, const char *buffer)
 	/* PCRE error buffer */
 	const char *errbuf;
 	/* For results */
-	int32_t matches, ovector[OVECCOUNT];
+	int32_t matches, erroffset, ovector[OVECCOUNT];
 
 	/* Compile IPs-regex */
-	regex = pcre_compile(IP_REGEX, 0, &errbuf, NULL, NULL);
+	regex = pcre_compile(IP_REGEX, 0, &errbuf, &erroffset, NULL);
 	if(!regex) {
 
 		print_debug(DBG_HIG_LVL, "pcre_compile error: %s\n", errbuf);
@@ -39,11 +39,36 @@ int8_t pcre_search_ip(struct ip_anon **ips, const char *buffer)
 	}
 
 	/* Apply compiled IPs-regex */
-	matches = pcre_exec(regex, NULL, buffer, strlen(buffer), 0, 0,
-					ovector, OVECCOUNT);
+	matches = pcre_exec(regex, NULL, buffer, strlen(buffer),
+					 0, 0, ovector, OVECCOUNT);
 	
 	/* Check results */
-	
+	if (matches < 0) {
+		/* Free compiled regex */
+		pcre_free(regex);
+
+		switch (matches) {
+			case PCRE_ERROR_NOMATCH: break;
+
+			default:
+				print_debug(DBG_HIG_LVL, 
+						"pcre_exec error: %d\n", matches);
+				/* An internal error occured */
+				return ANON_FAIL;
+		}
+
+		return ANON_SUCCESS;
+	}
+
+	uint32_t i;
+	for (i = 0; i < matches; i++) {
+		/* For debug purpose */
+		print_debug(DBG_LOW_LVL, "IP: %.*s\n",
+				ovector[2*i+1] - ovector[2*i], 
+					  buffer + ovector[2*i]);
+	}
+
+	pcre_free(regex);
 
 	return ANON_SUCCESS;
 }
