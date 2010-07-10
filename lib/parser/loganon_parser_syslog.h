@@ -24,6 +24,13 @@ int8_t anon_syslog_open(const char *filenameIn, const char *filenameOut);
  * @return ANON_FAIL if search fails, otherwise ANON_SUCCESS
  */
 extern
-int8_t anon_syslog_search_data(struct ip_anon **ips)
+int8_t anon_syslog_search_data(struct ip_anon **ips);
+
+/*
+ * Free all allocated memory
+ * @param ips pointer on the IPs list
+ */
+extern
+void anon_syslog_free(struct ip_anon *ips);
 
 #endif

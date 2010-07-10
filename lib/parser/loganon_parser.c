@@ -10,7 +10,10 @@
 
 #include "debug_utils.h"
 #include "files_extensions.h"
+
 #include "loganon_parser_pcap.h"
+#include "loganon_parser_syslog.h"
+
 
 /*
  * File type enum
@@ -18,7 +21,7 @@
 typedef enum {UNKNOWN, PCAP, SYSLOG} FILETYPE;
 
 /* Type of file being processed */
-FILETYPE FileType = UNKNOWN;
+static FILETYPE FileType = UNKNOWN;
 
 
 /* IP addresses to anonymize */
@@ -43,7 +46,7 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 		ret = anon_pcap_open(filenameIn, filenameOut);
 		if(ret == ANON_FAIL) {
 
-			print_debug(DBG_HIG_LVL, "anonPcapOpen error\n");
+			print_debug(DBG_HIG_LVL, "anon_pcap_open error\n");
 			return ret;
 		}
 
@@ -51,9 +54,23 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 		ret = anon_pcap_search_data(&ip_list);
 		if(ret == ANON_FAIL) {
 
-			print_debug(DBG_HIG_LVL, "anonPcapSearchSensitiveData error\n");
+			print_debug(DBG_HIG_LVL, "anon_pcap_search_data error\n");
 			return ret;
 		}
+	}
+	else {
+
+		FileType = SYSLOG;
+
+		/* We parse SYSLOG */
+		ret = anon_syslog_open(filenameIn, filenameOut);
+		if(ret == ANON_FAIL) {
+
+			print_debug(DBG_HIG_LVL, "anon_syslog_open error\n");
+			return ret;
+		}
+
+		anon_syslog_search_data(&ip_list);
 	}
 
 	return ANON_SUCCESS;
@@ -69,7 +86,11 @@ int8_t loganon_anonymize(uint8_t level)
 	/* TODO: Use EscoVa's functions */
 
 	/* Write pcap file with anonymized data */
-	anon_pcap_write_data(ip_list);
+	switch(FileType) {
+
+		case PCAP:
+			anon_pcap_write_data(ip_list);
+	}
 
 	return ANON_SUCCESS;
 }
@@ -89,6 +110,11 @@ int8_t loganon_terminate()
 		case PCAP:
 			/* Pcap file */
 			anon_pcap_free(ip_list);
+			break;
+
+		case SYSLOG:
+			/* Syslog file */
+			anon_syslog_free(ip_list);
 			break;
 
 		default:
