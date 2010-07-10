@@ -13,7 +13,9 @@
  * Retrieve IPs from buffer
  * @param ips IPs linked list
  * @param buffer buffer we wants search IPs into
+ * @return ANON_FAIL if pcre fails, otherwise ANON_SUCCESS
  */
+extern
 int8_t pcre_search_ip(struct ip_anon **ips, const char *buffer);
 
 #endif

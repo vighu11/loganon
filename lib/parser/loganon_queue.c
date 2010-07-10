@@ -16,7 +16,8 @@
  * @param list pointer on the IPs list
  * @return LIST_EXIST if IP is already known, otherwise LIST_SUCCESS
  */
-static int8_t checkIfIPExists(const char* original, struct ip_anon *list)
+static 
+int8_t checkIfIPExists(const char* original, struct ip_anon *list)
 {
 	struct ip_anon *current = list;
 
@@ -34,6 +35,7 @@ static int8_t checkIfIPExists(const char* original, struct ip_anon *list)
  * Insert a new IP in list cheking if it's a new IP or not
  * @return LIST_EXIST if IP has already been inserted, otherwise LIST_SUCCESS
  */
+extern
 int8_t insertNewIP(const char *original, struct ip_anon **list)
 {
 	struct ip_anon *current = *list;
@@ -89,6 +91,7 @@ int8_t insertNewIP(const char *original, struct ip_anon **list)
  * @param list IPs list
  * @return anonymized IP if original IP is found, NULL otherwise
  */
+extern
 const char* getAnonymizedIP(const char *originalIP, struct ip_anon *list)
 {
 	struct ip_anon* current = list;
@@ -107,6 +110,7 @@ const char* getAnonymizedIP(const char *originalIP, struct ip_anon *list)
  * Free all IPs inserted in list
  * @param list IPs list to free
  */
+extern
 void freeListIPs(struct ip_anon *list)
 {
 	if(list) {

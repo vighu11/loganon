@@ -17,8 +17,8 @@
 /*
  * Print debug message if level >= DBG_LEVEL
  */
-#define print_debug(level, ...) \
-	if(level >= DBG_LEVEL)   \
+#define print_debug(level, ...) 			\
+	if(level >= DBG_LEVEL)    			\
 		fprintf(stderr, __VA_ARGS__);
 
 #endif

@@ -15,6 +15,7 @@
  * Insert a new IP in list
  * @return -1 if insertion fails, 0 if IP is already inserted, otherwise 1
  */
+extern
 int8_t insertNewIP(const char* original, struct ip_anon **list);
 
 /*
@@ -23,12 +24,14 @@ int8_t insertNewIP(const char* original, struct ip_anon **list);
  * @param list IPs list
  * @return anonymized IP if original IP is found, NULL otherwise
  */
+extern
 const char* getAnonymizedIP(const char *originalIP, struct ip_anon *list);
 
 /*
  * Free all IPs inserted in list
  * @param list IPs list to free
  */
+extern
 void freeListIPs(struct ip_anon *list);
 
 #endif

@@ -15,6 +15,7 @@
  * @param filenameOut name of new file after anonymization
  * @return ANON_FAIL if file doesn't exist, otherwise ANON_SUCCESS
  */
+extern
 int8_t anon_syslog_open(const char *filenameIn, const char *filenameOut);
 
 /*
@@ -22,6 +23,7 @@ int8_t anon_syslog_open(const char *filenameIn, const char *filenameOut);
  * @param ips pointer on a pointer on the IPs list
  * @return ANON_FAIL if search fails, otherwise ANON_SUCCESS
  */
+extern
 int8_t anon_syslog_search_data(struct ip_anon **ips)
 
 #endif

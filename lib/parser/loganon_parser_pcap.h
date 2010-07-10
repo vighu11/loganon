@@ -15,6 +15,7 @@
  * @param filenameOut name of new file after anonymization
  * @return ANON_FAIL if file doesn't exist, otherwise ANON_SUCCESS
  */
+extern
 int8_t anon_pcap_open(const char *filenameIn, const char *filenameOut);
 
 /*
@@ -22,6 +23,7 @@ int8_t anon_pcap_open(const char *filenameIn, const char *filenameOut);
  * @param ips pointer on a pointer on the IPs list
  * @return ANON_FAIL if search fails, otherwise ANON_SUCCES
  */
+extern
 int8_t anon_pcap_search_data(struct ip_anon **ips);
 
 /*
@@ -29,12 +31,14 @@ int8_t anon_pcap_search_data(struct ip_anon **ips);
  * @param ips pointer on the anonymized IPs list
  * @return ANON_FAIL if can't write file, otherwise ANON_SUCCESS
  */
+extern
 int8_t anon_pcap_write_data(struct ip_anon *ips);
 
 /*
  * Free all allocated memory
  * @param ips pointer on the IPs list
  */
+extern
 void anon_pcap_free(struct ip_anon *ips);
 
 #endif

@@ -30,6 +30,7 @@ static struct ip_anon *ip_list;
  * @param filenameOut name of new file after anonymization
  * @return ANON_FAIL if file doesn't exist or is unsupported
  */
+extern
 int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 {
 	int8_t ret;
@@ -62,6 +63,7 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut)
  * Apply anonymization on sensitive data
  * @param level level of anonymization
  */
+extern
 int8_t loganon_anonymize(uint8_t level)
 {
 	/* TODO: Use EscoVa's functions */
@@ -76,6 +78,7 @@ int8_t loganon_anonymize(uint8_t level)
  * Close handles and free memory
  * @return ANON_FAIL if no file has been successfully opened
  */
+extern
 int8_t loganon_terminate()
 {
 	switch(FileType) {
