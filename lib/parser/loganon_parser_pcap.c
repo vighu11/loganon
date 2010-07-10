@@ -41,7 +41,8 @@ struct CBParam {
  * Display each IP found
  * @param ips pointer on the IPs list
  */
-static inline void display_ip_addr(struct ip_anon *ips)
+static inline
+void display_ip_addr(struct ip_anon *ips)
 {
 	struct ip_anon* current = ips;
 
@@ -55,7 +56,8 @@ static inline void display_ip_addr(struct ip_anon *ips)
  * ! This function will be used several times !
  * @param filename name of file to open
  */
-static inline int8_t open_pcap_file(const char *filename)
+static inline 
+int8_t open_pcap_file(const char *filename)
 {
 	char errbuf[PCAP_ERRBUF_SIZE];
 
@@ -69,8 +71,9 @@ static inline int8_t open_pcap_file(const char *filename)
 	return ANON_SUCCESS;
 }
 
-static inline void read_ip_addr(struct in_addr **ipsrc, struct in_addr **ipdst,
-							const u_char *packet)
+static inline 
+void read_ip_addr(struct in_addr **ipsrc, struct in_addr **ipdst,
+								const u_char *packet)
 {
 	u_char *pkt_ptr = (u_char *)packet;
 
@@ -99,6 +102,7 @@ static inline void read_ip_addr(struct in_addr **ipsrc, struct in_addr **ipdst,
  * @param filenameOut name of new file after anonymization
  * @return ANON_FAIL if file doesn't exist, otherwise ANON_SUCCESS
  */
+extern
 int8_t anon_pcap_open(const char *filenameIn, const char *filenameOut)
 {
 	/* Open pcap file for parsing */
@@ -130,6 +134,7 @@ int8_t anon_pcap_open(const char *filenameIn, const char *filenameOut)
  * @param ips pointer on a pointer on the IPs list
  * @return ANON_FAIL if search fails, otherwise ANON_SUCCESS
  */
+extern
 int8_t anon_pcap_search_data(struct ip_anon **ips)
 {
 	struct pcap_pkthdr header;
@@ -161,8 +166,9 @@ int8_t anon_pcap_search_data(struct ip_anon **ips)
 /*
  * Perform anonymization on sensitive data previously retrieved
  */
-static void read_callback(u_char *user, struct pcap_pkthdr *phdr, 
-						u_char *pdata)
+static 
+void read_callback(u_char *user, struct pcap_pkthdr *phdr, 
+								u_char *pdata)
 {
 	print_debug(DBG_LOW_LVL, "New packet processed!\n");
 
@@ -189,6 +195,7 @@ static void read_callback(u_char *user, struct pcap_pkthdr *phdr,
  * @param ips pointer on the anonymized IPs list
  * @return ANON_FAIL if can't write file, otherwise ANON_SUCCESS
  */
+extern
 int8_t anon_pcap_write_data(struct ip_anon *ips)
 {
 	/* Open pcap file for reading */
@@ -214,7 +221,7 @@ int8_t anon_pcap_write_data(struct ip_anon *ips)
 
 	/* Process each packet */
 	ret = pcap_dispatch(handleR, 0, (pcap_handler)read_callback,
-					(u_char *)&cbParam);
+							(u_char *)&cbParam);
 	if(ret == -1) {
 
 		print_debug(DBG_HIG_LVL, "pcap_dispatch error: %s\n",
@@ -234,6 +241,7 @@ int8_t anon_pcap_write_data(struct ip_anon *ips)
  * Free all allocated memory
  * @param ips pointer on the IPs list
  */
+extern
 void anon_pcap_free(struct ip_anon *ips)
 {
 	/* Close handles */
