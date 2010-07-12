@@ -42,11 +42,11 @@ struct ip_node {
 
 };
 
-struct ip_node *create_hash_table();
+struct ip_node * loganon_hash_table();
 int add_to_hash(unsigned long int key, unsigned long int newValue);
-struct ip_node *create_a_node(unsigned long int key, unsigned long int newValue);
+struct ip_node * loganon_new_hash_node(unsigned long int key, unsigned long int newValue);
 
-unsigned long int ipv4_hash_anon(struct ip_node *hash_table, unsigned long int old_ip);
-
+unsigned long int loganon_ipv4_hash_anon(struct ip_node *hash_table, unsigned long int old_ip);
+void loganon_destruct_hash(struct ip_node *hash_table);
 
 

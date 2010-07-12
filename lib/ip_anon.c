@@ -22,7 +22,7 @@ int loganon_ip_anon (int argc, char *argv[]){
   ip_list->index = 0;
   ip_list->field_value=0;
 
-  struct ip_node *hash_table = (struct ip_node *) create_hash_table();
+  struct ip_node *hash_table = (struct ip_node *) loganon_hash_table();
   struct addr *print_ip = NULL;
   print_ip = (struct addr *)  malloc(sizeof(struct addr));
 
@@ -41,7 +41,7 @@ int loganon_ip_anon (int argc, char *argv[]){
 //			ipv4_coherently_anon(ip,ip_list);
 
 			memcpy (print_ip,&ip,sizeof(ip)); //copying the original ip;
-			print_ip->addr_ip = ipv4_hash_anon(hash_table,ip.addr_ip);
+			print_ip->addr_ip = loganon_ipv4_hash_anon(hash_table,ip.addr_ip);
 			printf("\t HASH -> %s\t \n", addr_ntoa(print_ip));
 			
 			//Field Black Marker
@@ -70,6 +70,7 @@ int loganon_ip_anon (int argc, char *argv[]){
 
 		}
     }
+    loganon_destruct_hash(hash_table);
 }
 
 
@@ -187,7 +188,7 @@ struct addr * ipv4_coherently_anon (struct addr ip, struct node *head){
 
 
 //Black Marker
-struct addr * ipv4_black_marker (struct addr ip, int fields){
+struct addr * loganon_ipv4_black_marker (struct addr ip, int fields){
   unsigned long int expr1=0xFFFFFFFF, expr2=0;
   struct addr *newip = malloc(sizeof(struct addr));
   int i = fields;
@@ -211,7 +212,7 @@ struct addr * ipv4_black_marker (struct addr ip, int fields){
 }
 
 
-struct addr * ipv4_field_rotation (struct addr ip, int fields){
+struct addr * loganon_ipv4_field_rotation (struct addr ip, int fields){
   unsigned long int expr1=0xFFFFFFFF, expr2=0;
   struct addr *newip = malloc(sizeof(struct addr));
   int i = fields;
@@ -300,13 +301,10 @@ char * random_permutation(){
 
 //########################################################################
 //HASH TABLE STUFF
-//*******TODO: Make some files and put code below there =)
-//	- writing here to not bother with cmake stuff
-//
 //#######################################################################
 
 
-struct ip_node *create_hash_table(){
+struct ip_node * loganon_hash_table(){
 	struct ip_node *temp = NULL, *new =NULL;
 	new = (struct ip_node *) malloc(sizeof(struct ip_node));
 	memset(new, 0 , sizeof(struct ip_node));
@@ -316,12 +314,25 @@ struct ip_node *create_hash_table(){
 	return temp;
 }
 
+void loganon_destruct_hash(struct ip_node *hash_table){
+	
+	struct ip_node *tmp;
+	while(hash_table) {
+		tmp = hash_table;          /* copy pointer to first item     */
+		HASH_DEL(hash_table,tmp);  /* delete; users advances to next */
+		free(tmp);            /* optional- if you want to free  */
+	      }
+
+
+
+}
+
 int add_to_hash(unsigned long int key, unsigned long int newValue){
 	return 0;
 
 } 
 
-struct ip_node *create_a_node(unsigned long int key, unsigned long int newValue){
+struct ip_node * loganon_new_hash_node(unsigned long int key, unsigned long int newValue){
 	struct ip_node *node = NULL;
 	node = malloc(sizeof(struct  ip_node));
 	memset(node, 0, sizeof(struct ip_node)); /* The documentation of uthash requires zero fill */
@@ -331,20 +342,22 @@ struct ip_node *create_a_node(unsigned long int key, unsigned long int newValue)
 
 }
 
-unsigned long int ipv4_hash_anon(struct ip_node *hash_table, unsigned long int ind){
+unsigned long int loganon_ipv4_hash_anon(struct ip_node *hash_table, unsigned long int ind){
 	struct ip_node *tmp, *newNode = NULL;
 	HASH_FIND_INT(hash_table, &ind, tmp);
 	if (tmp){
-		printf("***REPEATED***");
+		//printf("***REPEATED***");
 		return tmp->newValue;
 		}
 	else{
 		//printf("\t");
-		newNode = (struct ip_node *) create_a_node(ind,loganon_random_ip());
+		newNode = (struct ip_node *) loganon_new_hash_node(ind,loganon_random_ip());
 		HASH_ADD_INT(hash_table, index, newNode);
 		return newNode->newValue;
 		}
 }
+
+
 
 
 
