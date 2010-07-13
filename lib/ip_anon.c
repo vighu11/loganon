@@ -351,7 +351,7 @@ unsigned long int loganon_ipv4_hash_anon(struct ip_node *hash_table, unsigned lo
 		}
 	else{
 		//printf("\t");
-		newNode = (struct ip_node *) loganon_new_hash_node(ind,loganon_random_ip());
+		newNode = (struct ip_node *) loganon_new_hash_node(ind,loganon_strong_random_ip());
 		HASH_ADD_INT(hash_table, index, newNode);
 		return newNode->newValue;
 		}
