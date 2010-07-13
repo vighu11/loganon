@@ -1,3 +1,8 @@
+/*
+ *	Program test for log parsing
+ *	Authors: Guillaume TOURON
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
