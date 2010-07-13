@@ -28,5 +28,7 @@
 #define _LOGANON_RANDOM_H_
 
 void loganon_random_ultraweak_symkey(char *s, const int len);
+unsigned long int loganon_strong_random_ip();
+
 
 #endif	/* _LOGANON_RANDOM_H_ */

@@ -26,5 +26,7 @@ find_package(PCRE REQUIRED)
 #
 find_package(DUMBNET REQUIRED)
 
+find_package(OPENSSL REQUIRED)
+
 add_subdirectory(bin)
 add_subdirectory(lib)
