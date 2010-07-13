@@ -29,7 +29,7 @@ loganon_parser_syslog.o: loganon_parser_syslog.c debug_utils.h loganon_errors.h 
 loganon_queue.o: loganon_queue.c loganon_queue.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 
-loganon_pcre.o: loganon_pcre.c loganon_pcre.h
+loganon_pcre.o: loganon_pcre.c loganon_pcre.h debug_utils.h loganon_queue.h loganon_regex.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 #

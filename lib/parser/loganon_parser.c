@@ -90,6 +90,17 @@ int8_t loganon_anonymize(uint8_t level)
 
 		case PCAP:
 			anon_pcap_write_data(ip_list);
+			break;
+
+		case SYSLOG:
+			break;
+
+		default:
+			/* Should never happen */
+			print_debug(DBG_HIG_LVL, "Internal error: %s %u\n",
+									__FILE__, __LINE__);
+
+			return ANON_FAIL;
 	}
 
 	return ANON_SUCCESS;
@@ -104,9 +115,6 @@ int8_t loganon_terminate()
 {
 	switch(FileType) {
 
-		case UNKNOWN:
-			return ANON_FAIL;
-
 		case PCAP:
 			/* Pcap file */
 			anon_pcap_free(ip_list);
@@ -118,7 +126,7 @@ int8_t loganon_terminate()
 			break;
 
 		default:
-			/* Should nvere happen */
+			/* Should never happen */
 			print_debug(DBG_HIG_LVL, "Internal error: %s %u\n",
 									__FILE__, __LINE__);
 
