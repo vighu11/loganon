@@ -28,5 +28,7 @@ find_package(DUMBNET REQUIRED)
 
 find_package(OPENSSL REQUIRED)
 
+find_package(PCAP REQUIRED)
+
 add_subdirectory(bin)
 add_subdirectory(lib)
