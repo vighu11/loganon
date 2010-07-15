@@ -17,3 +17,4 @@ target_link_libraries(loganon ${PCRE_PCRE_LIBRARY} ${DUMBNET_LIBRARIES}
 	${OPENSSL_LIBRARIES} )
 
 add_subdirectory(tests)
+add_subdirectory(parser)
