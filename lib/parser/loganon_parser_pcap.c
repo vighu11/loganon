@@ -41,7 +41,7 @@ struct CBParam {
  * Display each IP found
  * @param ips pointer on the IPs list
  */
-static inline
+static
 void display_ip_addr(struct ip_anon *ips)
 {
 	struct ip_anon* current = ips;
@@ -53,10 +53,10 @@ void display_ip_addr(struct ip_anon *ips)
 
 /*
  * Open a pcap file in offline mode
- * ! This function will be used several times !
+ * This function will be used several times
  * @param filename name of file to open
  */
-static inline 
+static 
 int8_t open_pcap_file(const char *filename)
 {
 	char errbuf[PCAP_ERRBUF_SIZE];
@@ -71,7 +71,13 @@ int8_t open_pcap_file(const char *filename)
 	return ANON_SUCCESS;
 }
 
-static inline 
+/*
+ * Reads IP addresses in IP packet header
+ * @param ipsrc store readen IP src (NULL if doesn't exist)
+ * @param ipdst store readen IP dst (NULL if doesn't exist)
+ * @param packet packet to parse
+ */
+static inline
 void read_ip_addr(struct in_addr **ipsrc, struct in_addr **ipdst,
 								const u_char *packet)
 {
@@ -146,12 +152,15 @@ int8_t anon_pcap_search_data(struct ip_anon **ips)
 
 		struct in_addr *ip_addr_src, *ip_addr_dst;
 
-		/* Retrieve addresses from packet */
+		/* Retrieve addresses from packet if exist */
 		read_ip_addr(&ip_addr_src, &ip_addr_dst, packet);
 
 		/* Add new IP into the list if necessary */
-		insertNewIP(inet_ntoa(*ip_addr_src), ips);
-		insertNewIP(inet_ntoa(*ip_addr_dst), ips);
+		if(ip_addr_src && ip_addr_dst) {
+
+			insertNewIP(inet_ntoa(*ip_addr_src), ips);
+			insertNewIP(inet_ntoa(*ip_addr_dst), ips);
+		}
 	}
 
 	/* Display all entries for debug */
@@ -183,8 +192,11 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 	/* TODO:
 	 * Apply anonymized data from linked lists
 	 */
-	ip_addr_src->s_addr = inet_addr("1.2.3.4");
-	ip_addr_dst->s_addr = inet_addr("5.6.7.8");
+	if(ip_addr_src && ip_addr_dst) {
+
+		ip_addr_src->s_addr = inet_addr("1.2.3.4");
+		ip_addr_dst->s_addr = inet_addr("5.6.7.8");
+	}
 	
 	/* Dump new packet (anonymized) */
 	pcap_dump((u_char *)param->savefile, phdr, pdata);
