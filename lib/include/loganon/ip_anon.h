@@ -35,16 +35,19 @@ void put_on_top(struct node * head, struct node * current, struct node * last);
 
 
 /* Structures for UTHASH LIBRARY */
-struct ip_node {
+typedef struct ip_node {
 	unsigned long int index;
 	unsigned long int newValue;
-	UT_hash_handle hh;
 
-};
+	UT_hash_handle hh1;
+	UT_hash_handle hh2;
+	struct ip_node *old_by_new;
+
+}_ip_node;
 
 struct ip_node * loganon_hash_table();
 int add_to_hash(unsigned long int key, unsigned long int newValue);
-struct ip_node * loganon_new_hash_node(unsigned long int key, unsigned long int newValue);
+struct ip_node * loganon_new_hash_node(struct ip_node*, unsigned long int key, unsigned long int newValue, struct ip_node *);
 
 unsigned long int loganon_ipv4_hash_anon(struct ip_node *hash_table, unsigned long int old_ip);
 void loganon_destruct_hash(struct ip_node *hash_table);

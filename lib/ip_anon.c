@@ -30,12 +30,12 @@ int loganon_ip_anon (int argc, char *argv[]){
 	if (argc > 1){
 		for ( i=1; i < argc;i++) { 
 
-			printf("Argument %d -> %s\t", i,argv[i]);
+			printf("Argument \t %d -> \t %s\t", i,argv[i]);
 
   
       
 			addr_aton(argv[i],&ip);
-			printf("Network Format %u\t", ip.addr_ip);
+			printf("\t \t Network Format %u\t", ip.addr_ip);
 			
 			
 //			ipv4_coherently_anon(ip,ip_list);
@@ -305,12 +305,18 @@ char * random_permutation(){
 
 
 struct ip_node * loganon_hash_table(){
-	struct ip_node *temp = NULL, *new =NULL;
+	struct ip_node *temp = NULL, *temp2 = NULL, *new =NULL, *secondary = NULL;
+	//Main index
 	new = (struct ip_node *) malloc(sizeof(struct ip_node));
 	memset(new, 0 , sizeof(struct ip_node));
 	new->index = 0;
 	new->newValue = 0;
-	HASH_ADD_INT(temp, index, new);
+	HASH_ADD(hh2,temp2, newValue, sizeof(unsigned int) , new);
+	
+	printf("HERE\n");
+	new->old_by_new = temp2;
+
+	HASH_ADD(hh1, temp, index, sizeof(unsigned int), new);
 	return temp;
 }
 
@@ -319,7 +325,7 @@ void loganon_destruct_hash(struct ip_node *hash_table){
 	struct ip_node *tmp;
 	while(hash_table) {
 		tmp = hash_table;          /* copy pointer to first item     */
-		HASH_DEL(hash_table,tmp);  /* delete; users advances to next */
+		HASH_DELETE(hh1, hash_table,tmp);  /* delete; users advances to next */
 		free(tmp);            /* optional- if you want to free  */
 	      }
 
@@ -332,8 +338,12 @@ int add_to_hash(unsigned long int key, unsigned long int newValue){
 
 } 
 
-struct ip_node * loganon_new_hash_node(unsigned long int key, unsigned long int newValue){
-	struct ip_node *node = NULL;
+struct ip_node * loganon_new_hash_node(struct ip_node *hash_table, unsigned long int key, unsigned long int newValue, struct ip_node *zero_node){
+	struct ip_node *node = NULL, *temp=NULL;
+	HASH_FIND(hh2, zero_node->old_by_new, &newValue, sizeof(unsigned int), temp);
+	if (temp)
+		return NULL;
+
 	node = malloc(sizeof(struct  ip_node));
 	memset(node, 0, sizeof(struct ip_node)); /* The documentation of uthash requires zero fill */
 	node->index = key;
@@ -343,16 +353,23 @@ struct ip_node * loganon_new_hash_node(unsigned long int key, unsigned long int 
 }
 
 unsigned long int loganon_ipv4_hash_anon(struct ip_node *hash_table, unsigned long int ind){
-	struct ip_node *tmp, *newNode = NULL;
-	HASH_FIND_INT(hash_table, &ind, tmp);
+	struct ip_node *tmp=NULL, *tmp1=NULL, *newNode = NULL;
+	unsigned int zero = 0;
+	HASH_FIND(hh1, hash_table, &ind, sizeof(unsigned int) , tmp);
 	if (tmp){
-		//printf("***REPEATED***");
+		printf("***REPEATED***");
 		return tmp->newValue;
 		}
 	else{
-		//printf("\t");
-		newNode = (struct ip_node *) loganon_new_hash_node(ind,loganon_strong_random_ip());
-		HASH_ADD_INT(hash_table, index, newNode);
+		
+		HASH_FIND(hh1,hash_table, &zero, sizeof(unsigned int), tmp);
+		do{
+			newNode = (struct ip_node *) loganon_new_hash_node(hash_table, ind,loganon_strong_random_ip(), tmp);
+		}while (newNode==NULL);
+		tmp1 = tmp->old_by_new;	
+		newNode-> old_by_new = tmp->old_by_new;
+		HASH_ADD(hh1, hash_table, index, sizeof(unsigned int),newNode);
+		HASH_ADD(hh2, tmp->old_by_new, newValue, sizeof(unsigned int), newNode);
 		return newNode->newValue;
 		}
 }
