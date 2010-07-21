@@ -21,7 +21,7 @@ add_executable(client client.c )
 set_target_properties(parser PROPERTIES SOVERSION 1)
 
 target_link_libraries(parser ${PCRE_PCRE_LIBRARY} ${DUMBNET_LIBRARIES}
-	${OPENSSL_LIBRARIES} ${PCAP_LIBRARIES})
+	${OPENSSL_LIBRARIES} ${PCAP_LIBRARIES} loganon)
 
 target_link_libraries(client ${PCRE_PCRE_LIBRARY} ${DUMBNET_LIBRARIES}
-   	${OPENSSL_LIBRARIES} ${PCAP_LIBRARIES} parser)
+   	${OPENSSL_LIBRARIES} ${PCAP_LIBRARIES} parser loganon)
