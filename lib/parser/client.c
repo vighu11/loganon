@@ -12,8 +12,8 @@
 /* Usage */
 void usage(const char *prog)
 {
-	printf("** Test program for the parser\n" \
-	       "** Usage: %s <pcap_in> <pcap_anonymized>\n", prog);
+	printf("\t** Test program for the parser\n" \
+	       "\t** Usage: %s <pcap_in> <pcap_anonymized>\n", prog);
 
 	exit(EXIT_FAILURE);
 }
