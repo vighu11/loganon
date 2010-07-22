@@ -189,13 +189,19 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 	/* Retrieve IP addresses */
 	read_ip_addr(&ip_addr_src, &ip_addr_dst, pdata);
 
-	/* TODO:
+	/*
 	 * Apply anonymized data from linked lists
 	 */
 	if(ip_addr_src && ip_addr_dst) {
 
-		ip_addr_src->s_addr = inet_addr("1.2.3.4");
-		ip_addr_dst->s_addr = inet_addr("5.6.7.8");
+		struct ip_anon *ips = param->ip_list;
+
+		/* Search ip addresses in dictionnary */
+		ip_addr_src->s_addr = getAnonymizedIP(
+					ADDR_LONG_TO_STR(ip_addr_src->s_addr), ips);
+
+		ip_addr_dst->s_addr = getAnonymizedIP(
+					ADDR_LONG_TO_STR(ip_addr_dst->s_addr), ips);
 	}
 	
 	/* Dump new packet (anonymized) */

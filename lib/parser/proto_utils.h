@@ -1,5 +1,5 @@
 /*
- *	Macros for packets parsing
+ *	Macros for packets parsing and conversions
  *	Authors: Guillaume TOURON
  */
 
@@ -28,6 +28,21 @@
  */
 #define GET_IPDST(pkt, off) \
 	&(((struct ip*)(pkt+off+4))->ip_src)
+
+
+/*
+ * Network conversion
+ * From long to string
+ */
+#define ADDR_LONG_TO_STR(ip_addr) \
+	inet_ntoa(*((struct in_addr *)&ip_addr))
+
+/*
+ * Network conversion
+ * From long to string
+ */
+#define ADDR_STR_TO_LONG(ip_addr) \
+	inet_addr(ip_addr)
 
 
 /* EtherType values */

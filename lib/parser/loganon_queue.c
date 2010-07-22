@@ -89,21 +89,21 @@ int8_t insertNewIP(const char *original, struct ip_anon **list)
  * Retrieve anonymized IP from the original one
  * @param originalIP IP not anonymized
  * @param list IPs list
- * @return anonymized IP if original IP is found, NULL otherwise
+ * @return anonymized IP if original IP is found, otherwise NULL
  */
 extern
-const char* getAnonymizedIP(const char *originalIP, struct ip_anon *list)
+uint32_t getAnonymizedIP(const char *originalIP, struct ip_anon *list)
 {
-	struct ip_anon* current = list;
+	struct ip_anon *current = list;
 
 	/* Display each entry */
 	for(; current; current = current->next_ip) {
 		/* If original IP matches */
 		if(!strcmp(current->ip_original, originalIP))
-			return current->ip_anonymized;
+			return inet_addr(current->ip_anonymized);
 	}
 
-	return NULL;
+	return 0;
 }
 
 /*

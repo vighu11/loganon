@@ -8,7 +8,11 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
+/* Anonymization functions */
+#include "../include/loganon/ip_anon.h"
+
 #include "debug_utils.h"
+#include "proto_utils.h"
 #include "files_extensions.h"
 
 #include "loganon_parser_pcap.h"
@@ -70,10 +74,46 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 			return ret;
 		}
 
-		anon_syslog_search_data(&ip_list);
+		/* Sensitive data in SYSLOGs */
+		ret = anon_syslog_search_data(&ip_list);
+		if(ret == ANON_FAIL) {
+
+			print_debug(DBG_HIG_LVL, "anon_syslog_search_data error\n");
+			return ret;
+		}
 	}
 
 	return ANON_SUCCESS;
+}
+
+static
+void anonymize_ipv4()
+{
+	/* Create a new hash table for ips_v4 */
+	struct ip_node *hash_table = loganon_hash_table();
+
+	/* For each IP, anonymize it ! */
+	struct ip_anon *current = ip_list;
+	for(; current; current = current->next_ip) {
+
+		uint32_t old_ip = ADDR_STR_TO_LONG(current->ip_original);
+
+		/* Anonymize original IP */
+		uint32_t new_ip = loganon_ipv4_hash_anon(hash_table, old_ip);
+
+		char *ip_anonymized = ADDR_LONG_TO_STR(new_ip);
+
+		/* Save anonymized ip in the list */
+		strncpy(current->ip_anonymized, ip_anonymized,
+						strlen(ip_anonymized) + 1);
+
+		/* Debug purpose */
+		print_debug(DBG_HIG_LVL, "%s -> %s\n", current->ip_original,
+								   current->ip_anonymized);
+	}
+
+	/* Free memory */
+	loganon_destruct_hash(hash_table);
 }
 
 /*
@@ -83,7 +123,8 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 extern
 int8_t loganon_anonymize(uint8_t level)
 {
-	/* TODO: Use EscoVa's functions */
+	/* Anonymization */
+	anonymize_ipv4();
 
 	/* Write pcap file with anonymized data */
 	switch(FileType) {
