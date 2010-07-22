@@ -313,7 +313,6 @@ struct ip_node * loganon_hash_table(){
 	new->newValue = 0;
 	HASH_ADD(hh2,temp2, newValue, sizeof(unsigned int) , new);
 	
-	printf("HERE\n");
 	new->old_by_new = temp2;
 
 	HASH_ADD(hh1, temp, index, sizeof(unsigned int), new);
@@ -357,7 +356,6 @@ unsigned long int loganon_ipv4_hash_anon(struct ip_node *hash_table, unsigned lo
 	unsigned int zero = 0;
 	HASH_FIND(hh1, hash_table, &ind, sizeof(unsigned int) , tmp);
 	if (tmp){
-		printf("***REPEATED***");
 		return tmp->newValue;
 		}
 	else{

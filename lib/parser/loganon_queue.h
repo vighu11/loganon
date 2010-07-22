@@ -22,10 +22,10 @@ int8_t insertNewIP(const char* original, struct ip_anon **list);
  * Retrieve anonymized IP from the original one
  * @param originalIP IP not anonymized
  * @param list IPs list
- * @return anonymized IP if original IP is found, NULL otherwise
+ * @return anonymized IP if original IP is found, otherwise NULL
  */
 extern
-const char* getAnonymizedIP(const char *originalIP, struct ip_anon *list);
+uint32_t getAnonymizedIP(const char *originalIP, struct ip_anon *list);
 
 /*
  * Free all IPs inserted in list

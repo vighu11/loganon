@@ -12,7 +12,7 @@
 #define DBG_HIG_LVL 3
 
 /* Debug level for loganon */
-#define DBG_LEVEL DBG_LOW_LVL
+#define DBG_LEVEL DBG_HIG_LVL
 
 /*
  * Print debug message if level >= DBG_LEVEL
