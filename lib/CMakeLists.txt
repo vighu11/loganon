@@ -10,7 +10,7 @@ include_directories(AFTER ${DUMBNET_INCLUDE_DIRS})
 include_directories(AFTER ${OPENSSL_INCLUDE_DIR})
 
 
-add_library(loganon SHARED random.c ip_anon.c)
+add_library(loganon SHARED random.c ip_anon.c str_anon.c)
 set_target_properties(loganon PROPERTIES SOVERSION 1)
 
 target_link_libraries(loganon ${PCRE_PCRE_LIBRARY} ${DUMBNET_LIBRARIES}

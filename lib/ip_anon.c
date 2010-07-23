@@ -74,7 +74,9 @@ int loganon_ip_anon (int argc, char *argv[]){
 }
 
 
-
+//==========================================================================
+//Todo: Above is old, remove that...
+//==========================================================================
 /* linked list functions */
 struct node *new_ip_list (){
 	struct node * tmp;
@@ -160,30 +162,8 @@ void put_on_top(struct node * head, struct node * current, struct node * last){
 		}
 
 }
-
-
-
-/* Working with libdumbnet */
-
-struct addr * ipv4_coherently_anon (struct addr ip, struct node *head){
-	unsigned long int index1,index2,index3,index4;
-	index1 = ip.addr_ip & 0x000000FF;
-	index2 = ip.addr_ip & 0x0000FFFF;
-	index3 = ip.addr_ip & 0x00FFFFFF;
-	index4 = ip.addr_ip;
-	
-	struct addr *newip = malloc(sizeof(struct addr));
-	memcpy (newip,&ip,sizeof(ip)); //copying the original ip
-	newip->addr_ip = search_and_insert(ip.addr_ip, head, (struct node *) head->prox, head);
-	printf("\t%s Field 1\n", addr_ntoa(newip));
-	free(newip);
-	
-	return NULL;
-}
-
-
-
-
+//END
+//===============================================================================
 
 
 
@@ -302,6 +282,11 @@ char * random_permutation(){
 //########################################################################
 //HASH TABLE STUFF
 //#######################################################################
+//
+//
+//
+//
+//
 
 
 struct ip_node * loganon_hash_table(){
@@ -377,4 +362,3 @@ unsigned long int loganon_ipv4_hash_anon(struct ip_node *hash_table, unsigned lo
 
 
 
-/* Working with UTHASH */
