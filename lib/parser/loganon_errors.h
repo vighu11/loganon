@@ -7,6 +7,16 @@
 #define LOGANON_ERRORS_H
 
 /*
+ * Macro for processing errors
+ */
+#define ANON_PROCESS_ERROR(msg)				\
+		if(ret == ANON_FAIL) {				\
+									\
+			print_debug(DBG_HIG_LVL, msg);	\
+			return ret;					\
+		}
+
+/*
  * Return values for parsers
  */
 #define ANON_FAIL     -1

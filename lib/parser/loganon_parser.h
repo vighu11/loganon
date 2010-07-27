@@ -22,6 +22,7 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut);
 /*
  * Apply anonymization on sensitive data
  * @param level level of anonymization
+ * @return ANON_SUCCESS if anonymization succeeded, otherwise ANON_FAIL
  */
 extern
 int8_t loganon_anonymize(uint8_t level);

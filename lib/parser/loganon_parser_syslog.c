@@ -66,7 +66,16 @@ int8_t anon_syslog_open(const char *filenameIn, const char *filenameOut)
 extern
 int8_t anon_syslog_search_data(struct ip_anon **ips)
 {
-	pcre_search_ip(ips, "ot42ot 83a4, 34a30 1337");
+	char line[512];
+
+	/* Read lines in syslog file */
+	while(fgets(line, sizeof(line), handleR)) {
+
+		/* Search for IPs */
+		int8_t ret = pcre_search_ip(ips, line);
+		if(ret == ANON_FAIL)
+			return ret;
+	}
 
 	return ANON_SUCCESS;
 }

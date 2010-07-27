@@ -10,8 +10,8 @@
 #define OVECCOUNT 3
 
 /*
- * Regular expressions for searching sensitive data
+ * Regular expressions for searching sevnsitive data
  */
-#define IP_REGEX "[0-9]a"
+#define IP_REGEX "(?:[0-9]{1,3}\.){3}[0-9]{1,3}"
 
 #endif
