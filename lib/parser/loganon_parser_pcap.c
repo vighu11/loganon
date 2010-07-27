@@ -72,6 +72,61 @@ int8_t open_pcap_file(const char *filename)
 }
 
 /*
+ * Compute IP checksum
+ * @param packet packet to parse
+ * @return IP checksum in network format
+ */
+static inline
+uint16_t compute_ip_checksum(const u_char *packet)
+{
+	struct ip *ip_header = NULL;
+
+	u_char *pkt_ptr = (u_char *)packet;
+
+     	/* EtherType from ethernet packet */
+	uint16_t ether_type = GET_ETHERTYPE(pkt_ptr);
+
+	/* Compute offset of IP datagram */
+	if(ether_type == ETHER_TYPE_IP)
+		ip_header = (struct ip *)(packet + 14);
+
+     	else if(ether_type == ETHER_TYPE_8021Q)
+		ip_header = (struct ip *)(packet + 18);
+
+	/* Array for all 16-bits words in IP header */
+	uint16_t *words = malloc(sizeof(uint16_t)*(5*2)); // ip_header->hl
+	assert(words != NULL);
+
+	uint8_t i = 0;
+	for(; i < (5*2); i++)	// ip_header->hl
+		words[i] = *((uint16_t *)ip_header + i);
+
+	/* Erase checksum field */
+	words[5] = 0;
+
+	/* Compute checksum */
+	uint32_t sum1 = 0;
+	uint16_t sum2 = 0;
+	for(i = 0; i < (5*2); i++) // ip_header->hl
+		sum1 += words[i];
+
+	if(sum1 > 0xFFFF)
+		sum2 = (sum1 >> 16) + (sum1 & 0xFFFF);
+	else
+		sum2 = (uint16_t)sum1;
+
+	/* Convert to network format */
+	sum2 = htons(~sum2);
+
+	/* Debug purpose */
+	print_debug(DBG_HIG_LVL, "IP Checksum: 0x%.4X\n", (sum2 & 0xFFFF));
+
+	free(words);
+
+	return sum2;
+}
+
+/*
  * Reads IP addresses in IP packet header
  * @param ipsrc store readen IP src (NULL if doesn't exist)
  * @param ipdst store readen IP dst (NULL if doesn't exist)
@@ -95,6 +150,7 @@ void read_ip_addr(struct in_addr **ipsrc, struct in_addr **ipdst,
 		*ipsrc = GET_IPSRC(pkt_ptr, 14);
 		*ipdst = GET_IPDST(pkt_ptr, 14);
 	}
+	/* VLAN tagged frame */
      	else if(ether_type == ETHER_TYPE_8021Q) {
 
 		*ipsrc = GET_IPSRC(pkt_ptr, 18);
@@ -113,10 +169,8 @@ int8_t anon_pcap_open(const char *filenameIn, const char *filenameOut)
 {
 	/* Open pcap file for parsing */
 	int8_t ret = open_pcap_file(filenameIn);
-	if(ret == ANON_FAIL) {
-
+	if(ret == ANON_FAIL)
 		return ret;
-	}
 
 	/* Allocate memory for filenameIn*/
 	g_filenameIn = malloc(strlen(filenameIn) + 1);
@@ -184,6 +238,9 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 	/* Get user structure */
 	struct CBParam *param = (struct CBParam *)user;
 
+	/*
+	 * For IP anonymization
+	 */
 	struct in_addr *ip_addr_src, *ip_addr_dst;
 
 	/* Retrieve IP addresses */
@@ -195,6 +252,12 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 	if(ip_addr_src && ip_addr_dst) {
 
 		struct ip_anon *ips = param->ip_list;
+
+		/* Compute actual IP checksum */
+		uint16_t ip_checksum = compute_ip_checksum(pdata);
+
+		/* We have necessary an ip_list */
+		assert(ips != NULL);
 
 		/* Search ip addresses in dictionnary */
 		ip_addr_src->s_addr = getAnonymizedIP(

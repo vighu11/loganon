@@ -91,7 +91,7 @@ int8_t pcre_search_ip(struct ip_anon **ips, const char *buffer)
 		len = ovector[2*i+1] - ovector[2*i];
 
 		/* For debug purpose */
-		print_debug(DBG_LOW_LVL, "IP: %.*s\n", len,  
+		print_debug(DBG_HIG_LVL, "IP: %.*s\n", len,
 						  buffer + ovector[2*i]);
 
 		char temp[IP_ADDR_LEN+1];

@@ -11,10 +11,12 @@
 /* Anonymization functions */
 #include "../include/loganon/ip_anon.h"
 
-#include "debug_utils.h"
-#include "proto_utils.h"
 #include "files_extensions.h"
 
+#include "debug_utils.h"
+#include "proto_utils.h"
+
+#include "loganon_errors.h"
 #include "loganon_parser_pcap.h"
 #include "loganon_parser_syslog.h"
 
@@ -48,19 +50,11 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 
 		/* We parse a pcap file */
 		ret = anon_pcap_open(filenameIn, filenameOut);
-		if(ret == ANON_FAIL) {
-
-			print_debug(DBG_HIG_LVL, "anon_pcap_open error\n");
-			return ret;
-		}
+		ANON_PROCESS_ERROR("anon_pcap_open");
 
 		/* Search for sensitive data */
 		ret = anon_pcap_search_data(&ip_list);
-		if(ret == ANON_FAIL) {
-
-			print_debug(DBG_HIG_LVL, "anon_pcap_search_data error\n");
-			return ret;
-		}
+		ANON_PROCESS_ERROR("anon_pcap_search_data");
 	}
 	else {
 
@@ -68,24 +62,19 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 
 		/* We parse SYSLOG */
 		ret = anon_syslog_open(filenameIn, filenameOut);
-		if(ret == ANON_FAIL) {
+		ANON_PROCESS_ERROR("anon_syslog_open");
 
-			print_debug(DBG_HIG_LVL, "anon_syslog_open error\n");
-			return ret;
-		}
-
-		/* Sensitive data in SYSLOGs */
+		/* Sensitive data in SYSLOG */
 		ret = anon_syslog_search_data(&ip_list);
-		if(ret == ANON_FAIL) {
-
-			print_debug(DBG_HIG_LVL, "anon_syslog_search_data error\n");
-			return ret;
-		}
+		ANON_PROCESS_ERROR("anon_syslog_search_data");
 	}
 
 	return ANON_SUCCESS;
 }
 
+/*
+ * Anonymize IPv4 addresses
+ */
 static
 void anonymize_ipv4()
 {
@@ -105,7 +94,7 @@ void anonymize_ipv4()
 
 		/* Save anonymized ip in the list */
 		strncpy(current->ip_anonymized, ip_anonymized,
-						strlen(ip_anonymized) + 1);
+						 strlen(ip_anonymized) + 1);
 
 		/* Debug purpose */
 		print_debug(DBG_HIG_LVL, "%s -> %s\n", current->ip_original,
@@ -119,6 +108,7 @@ void anonymize_ipv4()
 /*
  * Apply anonymization on sensitive data
  * @param level level of anonymization
+ * @return ANON_SUCCESS if anonymization succeeded, otherwise ANON_FAIL
  */
 extern
 int8_t loganon_anonymize(uint8_t level)
