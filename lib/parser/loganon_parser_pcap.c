@@ -108,7 +108,7 @@ uint16_t compute_ip_checksum(const u_char *packet)
 		sum2 = (uint16_t)sum1;
 
 	/* Debug purpose */
-	print_debug(DBG_HIG_LVL, "IP Checksum: 0x%.4X\n",
+	print_debug(DBG_LOW_LVL, "IP Checksum: 0x%.4X\n",
 						htons((~sum2 & 0xFFFF)));
 
 	free(words);
@@ -127,17 +127,9 @@ void update_ip_checksum(u_char *packet)
 
 	struct ip *ip_header = NULL;
 
-     	/* EtherType from ethernet packet */
-	uint16_t ether_type = GET_ETHERTYPE(pkt_ptr);
+	GET_IP_HEADER(packet, ip_header);
 
-	/* Compute offset of IP datagram */
-	if(ether_type == ETHER_TYPE_IP)
-		ip_header = (struct ip *)(pkt_ptr + 14);
-
-     	else if(ether_type == ETHER_TYPE_8021Q)
-		ip_header = (struct ip *)(pkt_ptr + 18);
-
-	/* Compute new checksum */
+	/* Update with new checksum */
 	ip_header->ip_sum = compute_ip_checksum(packet);
 }
 
