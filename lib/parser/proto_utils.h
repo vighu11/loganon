@@ -10,6 +10,19 @@
 #include <netinet/ip.h>
 
 /*
+ * Retrieve IP header from packet
+ */
+#define GET_IP_HEADER(pkt, hdr)			\
+								\
+	uint16_t ether_type = GET_ETHERTYPE(pkt);	\
+								\
+	if(ether_type == ETHER_TYPE_IP)		\
+		hdr = (struct ip *)(pkt + 14);	\
+								\
+     	else if(ether_type == ETHER_TYPE_8021Q)	\
+		hdr = (struct ip *)(pkt + 18);
+
+/*
  * Retrieve EtherType field from ethernet datagrams
  */
 #define GET_ETHERTYPE(pkt) \

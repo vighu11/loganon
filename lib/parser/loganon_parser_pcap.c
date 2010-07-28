@@ -73,32 +73,22 @@ int8_t open_pcap_file(const char *filename)
 
 /*
  * Compute IP checksum
- * @param packet packet to parse
- * @return IP checksum in network format
+ * @param packet packet to compute checksum
+ * @return IP checksum in host format
  */
 static inline
 uint16_t compute_ip_checksum(const u_char *packet)
 {
 	struct ip *ip_header = NULL;
 
-	u_char *pkt_ptr = (u_char *)packet;
-
-     	/* EtherType from ethernet packet */
-	uint16_t ether_type = GET_ETHERTYPE(pkt_ptr);
-
-	/* Compute offset of IP datagram */
-	if(ether_type == ETHER_TYPE_IP)
-		ip_header = (struct ip *)(packet + 14);
-
-     	else if(ether_type == ETHER_TYPE_8021Q)
-		ip_header = (struct ip *)(packet + 18);
+	GET_IP_HEADER(packet, ip_header);
 
 	/* Array for all 16-bits words in IP header */
-	uint16_t *words = malloc(sizeof(uint16_t)*(5*2)); // ip_header->hl
+	uint16_t *words = malloc(sizeof(uint16_t)*(ip_header->ip_hl*2));
 	assert(words != NULL);
 
 	uint8_t i = 0;
-	for(; i < (5*2); i++)	// ip_header->hl
+	for(; i < (ip_header->ip_hl*2); i++)
 		words[i] = *((uint16_t *)ip_header + i);
 
 	/* Erase checksum field */
@@ -107,7 +97,9 @@ uint16_t compute_ip_checksum(const u_char *packet)
 	/* Compute checksum */
 	uint32_t sum1 = 0;
 	uint16_t sum2 = 0;
-	for(i = 0; i < (5*2); i++) // ip_header->hl
+
+	/* Sum all 16-bits words */
+	for(i = 0; i < (ip_header->ip_hl*2); i++)
 		sum1 += words[i];
 
 	if(sum1 > 0xFFFF)
@@ -115,15 +107,38 @@ uint16_t compute_ip_checksum(const u_char *packet)
 	else
 		sum2 = (uint16_t)sum1;
 
-	/* Convert to network format */
-	sum2 = htons(~sum2);
-
 	/* Debug purpose */
-	print_debug(DBG_HIG_LVL, "IP Checksum: 0x%.4X\n", (sum2 & 0xFFFF));
+	print_debug(DBG_HIG_LVL, "IP Checksum: 0x%.4X\n",
+						htons((~sum2 & 0xFFFF)));
 
 	free(words);
 
-	return sum2;
+	return ~sum2;
+}
+
+/*
+ * Update IP checksum after anonymization
+ * @param packet packet to update checksum
+ */
+static inline
+void update_ip_checksum(u_char *packet)
+{
+	u_char *pkt_ptr = (u_char *)packet;
+
+	struct ip *ip_header = NULL;
+
+     	/* EtherType from ethernet packet */
+	uint16_t ether_type = GET_ETHERTYPE(pkt_ptr);
+
+	/* Compute offset of IP datagram */
+	if(ether_type == ETHER_TYPE_IP)
+		ip_header = (struct ip *)(pkt_ptr + 14);
+
+     	else if(ether_type == ETHER_TYPE_8021Q)
+		ip_header = (struct ip *)(pkt_ptr + 18);
+
+	/* Compute new checksum */
+	ip_header->ip_sum = compute_ip_checksum(packet);
 }
 
 /*
@@ -172,7 +187,7 @@ int8_t anon_pcap_open(const char *filenameIn, const char *filenameOut)
 	if(ret == ANON_FAIL)
 		return ret;
 
-	/* Allocate memory for filenameIn*/
+	/* Allocate memory for filenameIn */
 	g_filenameIn = malloc(strlen(filenameIn) + 1);
 
 	assert(g_filenameIn != NULL);
@@ -230,7 +245,7 @@ int8_t anon_pcap_search_data(struct ip_anon **ips)
  * Perform anonymization on sensitive data previously retrieved
  */
 static 
-void read_callback(u_char *user, struct pcap_pkthdr *phdr, 
+void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 								u_char *pdata)
 {
 	print_debug(DBG_LOW_LVL, "New packet processed!\n");
@@ -256,6 +271,8 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 		/* Compute actual IP checksum */
 		uint16_t ip_checksum = compute_ip_checksum(pdata);
 
+		/* TODO: Check if checksum is corrupted */
+
 		/* We have necessary an ip_list */
 		assert(ips != NULL);
 
@@ -265,6 +282,8 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 
 		ip_addr_dst->s_addr = getAnonymizedIP(
 					ADDR_LONG_TO_STR(ip_addr_dst->s_addr), ips);
+
+		update_ip_checksum(pdata);
 	}
 	
 	/* Dump new packet (anonymized) */
