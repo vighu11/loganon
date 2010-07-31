@@ -8,19 +8,34 @@
 
 #include <arpa/inet.h>
 #include <netinet/ip.h>
+#include <netinet/udp.h>
+
 
 /*
  * Retrieve IP header from packet
  */
-#define GET_IP_HEADER(pkt, hdr)			\
+#define GET_IP_HEADER(pkt, ip_hdr)			\
 								\
 	uint16_t ether_type = GET_ETHERTYPE(pkt);	\
 								\
 	if(ether_type == ETHER_TYPE_IP)		\
-		hdr = (struct ip *)(pkt + 14);	\
+		ip_hdr = (struct ip *)(pkt + 14);	\
 								\
      	else if(ether_type == ETHER_TYPE_8021Q)	\
-		hdr = (struct ip *)(pkt + 18);
+		ip_hdr = (struct ip *)(pkt + 18);	\
+	else							\
+		ip_hdr = NULL;
+
+/*
+ * Retrieve UDP header from IP header
+ */
+#define GET_UDP_HEADER(ip_hdr, udp_hdr)							\
+													\
+	if(ip_hdr->ip_p == IPPROTO_UDP) 							\
+		udp_hdr = (struct udphdr *)((u_char *)ip_hdr+sizeof(struct ip));	\
+	else												\
+		udp_hdr = NULL;
+
 
 /*
  * Retrieve EtherType field from ethernet datagrams

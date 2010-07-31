@@ -28,7 +28,7 @@ static pcap_dumper_t *handleW = NULL;
 static char *g_filenameIn, *g_filenameOut;
 
 /*
- * Data sent to pcap parser's callback
+ * Data sent to PCAP parser's callback
  */
 struct CBParam {
 
@@ -83,6 +83,8 @@ uint16_t compute_ip_checksum(const u_char *packet)
 
 	GET_IP_HEADER(packet, ip_header);
 
+	assert(ip_header != NULL);
+
 	/* Array for all 16-bits words in IP header */
 	uint16_t *words = malloc(sizeof(uint16_t)*(ip_header->ip_hl*2));
 	assert(words != NULL);
@@ -107,7 +109,7 @@ uint16_t compute_ip_checksum(const u_char *packet)
 	else
 		sum2 = (uint16_t)sum1;
 
-	/* Debug purpose */
+	/* Print checksum in network format */
 	print_debug(DBG_LOW_LVL, "IP Checksum: 0x%.4X\n",
 						htons((~sum2 & 0xFFFF)));
 
@@ -129,8 +131,105 @@ void update_ip_checksum(u_char *packet)
 
 	GET_IP_HEADER(packet, ip_header);
 
+	assert(ip_header != NULL);
 	/* Update with new checksum */
 	ip_header->ip_sum = compute_ip_checksum(packet);
+}
+
+/*
+ * Compute UDP checksum
+ * @param packet packet to compute checksum
+ * @return UDP checksum in host format
+ */
+static inline
+uint16_t compute_udp_checksum(const u_char *packet)
+{
+	struct ip *ip_header = NULL;
+	/* UDP header infos */
+	struct udphdr *udp_header = NULL;
+
+	/* Retrieve IP header */
+	GET_IP_HEADER(packet, ip_header);
+
+	assert(ip_header != NULL);
+
+	/* Retrieve UDP header */
+	GET_UDP_HEADER(ip_header, udp_header);
+
+	if(!udp_header) return 0;
+
+	/* Compute padding */
+	uint8_t padding = ntohs(udp_header->len) % 2;
+	/* Compute len */
+	uint32_t len = (ntohs(udp_header->len)/2)+padding;
+
+	/* Array for all 16-bits words in UDP header */
+	uint16_t *words_udp = malloc(sizeof(uint16_t)*len);
+	assert(words_udp != NULL);
+
+	uint8_t i = 0;
+	for(; i < len; i++)
+		words_udp[i] = *((uint16_t *)udp_header + i);
+
+	if(padding)	
+		words_udp[len-1] &= 0xFF;
+
+	/* Erase checksum field */
+	words_udp[3] = 0;
+
+	/* Array for all 16-bits words in PSEUDO header */
+	uint16_t *words_pseudo = malloc(sizeof(uint16_t)*6);
+	assert(words_udp != NULL);
+
+	/* Fill IPs in PSEUDO header */
+	words_pseudo[0] = 0xB78D;//*((uint16_t *)&ip_header->ip_src);
+	words_pseudo[1] = 0x0F57;//*((uint16_t *)&ip_header->ip_src + 1);
+	words_pseudo[2] = 0x3F55;//*((uint16_t *)&ip_header->ip_dst);
+	words_pseudo[3] = 0x06BB;//*((uint16_t *)&ip_header->ip_dst + 1);
+
+	/* Fill protocol field */
+	words_pseudo[4] = 0x1700;//*((uint8_t *)&ip_header->ip_p);
+	/* Fill UDP length */
+	words_pseudo[5] = 0x5100;//*((uint16_t *)&udp_header->len);
+
+	/* Compute checksum */
+	uint32_t sum1 = 0;
+
+	/* Sum all 16-bits words */
+	for(i = 0; i < len; i++) {
+		sum1 += words_udp[i];
+
+		if(sum1 > 0xFFFF)
+			sum1 = (sum1 >> 16) + (sum1 & 0xFFFF);
+	}
+
+uint32_t sum2 = 0;
+	for(i = 0; i < 6; i++) {
+		//sum1 += words_pseudo[i];
+		sum2 += words_pseudo[i];
+printf("%.4X ", words_pseudo[i]);
+		if(sum1 > 0xFFFF)
+			sum1 = (sum1 >> 16) + (sum1 & 0xFFFF);
+		if(sum2 > 0xFFFF)
+			sum2 = (sum2 >> 16) + (sum2 & 0xFFFF);
+printf(" : %.4X\n", htons(sum2 & 0xFFFF));
+	}
+
+	print_debug(DBG_HIG_LVL, "UDP Checksum_1: 0x%.4X\n",
+						htons((uint16_t)(sum1 & 0xFFFF)));
+	/* Print checksum in network format */
+	print_debug(DBG_HIG_LVL, "UDP Checksum_2: 0x%.4X\n",
+						htons((uint16_t)(sum2 & 0xFFFF)));
+
+	sum2 += sum1;
+	if(sum2 > 0xFFFF)
+		sum2 = (sum2 >> 16) + (sum2 & 0xFFFF);
+	printf("total sum: 0x%.4X\n", ~htons(((sum2) & 0xFFFF)));
+
+	free(words_udp);
+	free(words_pseudo);
+
+	return 1;
 }
 
 /*
@@ -240,7 +339,7 @@ static
 void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 								u_char *pdata)
 {
-	print_debug(DBG_LOW_LVL, "New packet processed!\n");
+	print_debug(DBG_LOW_LVL, "Process new packet\n");
 
 	/* Get user structure */
 	struct CBParam *param = (struct CBParam *)user;
@@ -265,7 +364,7 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 
 		/* TODO: Check if checksum is corrupted */
 
-		/* We have necessary an ip_list */
+		/* We necessary have an ip_list */
 		assert(ips != NULL);
 
 		/* Search ip addresses in dictionnary */
@@ -276,6 +375,9 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 					ADDR_LONG_TO_STR(ip_addr_dst->s_addr), ips);
 
 		update_ip_checksum(pdata);
+
+		/* Compute actual UDP checksum if exists */
+		uint16_t udp_checksum = compute_udp_checksum(pdata);
 	}
 	
 	/* Dump new packet (anonymized) */
