@@ -22,7 +22,7 @@
 
 
 /*
- * File type enum
+ * File type enumeration
  */
 typedef enum {UNKNOWN, PCAP, SYSLOG} FILETYPE;
 
@@ -48,7 +48,7 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 
 		FileType = PCAP;
 
-		/* We parse a pcap file */
+		/* We parse a PCAP file */
 		ret = anon_pcap_open(filenameIn, filenameOut);
 		ANON_PROCESS_ERROR("anon_pcap_open");
 
@@ -152,7 +152,7 @@ int8_t loganon_terminate()
 			break;
 
 		case SYSLOG:
-			/* Syslog file */
+			/* SYSLOG file */
 			anon_syslog_free(ip_list);
 			break;
 
