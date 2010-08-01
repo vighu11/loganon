@@ -24,7 +24,7 @@
      	else if(ether_type == ETHER_TYPE_8021Q)	\
 		ip_hdr = (struct ip *)(pkt + 18);	\
 	else							\
-		ip_hdr = NULL;
+		ip_hdr = NULL;	// assert(false);
 
 /*
  * Retrieve UDP header from IP header
@@ -34,7 +34,7 @@
 	if(ip_hdr->ip_p == IPPROTO_UDP) 							\
 		udp_hdr = (struct udphdr *)((u_char *)ip_hdr+sizeof(struct ip));	\
 	else												\
-		udp_hdr = NULL;
+		udp_hdr = NULL;	// assert(false);
 
 
 /*
