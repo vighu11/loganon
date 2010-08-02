@@ -83,39 +83,25 @@ uint16_t compute_ip_checksum(const u_char *packet)
 
 	GET_IP_HEADER(packet, ip_header);
 
-	assert(ip_header != NULL);
-
-	/* Array for all 16-bits words in IP header */
-	uint16_t *words = malloc(sizeof(uint16_t)*(ip_header->ip_hl*2));
-	assert(words != NULL);
+	uint32_t sum = 0;
 
 	uint8_t i = 0;
 	for(; i < (ip_header->ip_hl*2); i++)
-		words[i] = *((uint16_t *)ip_header + i);
+		/* Sum all 16-bits words */
+		sum += GET_16_WORD(ip_header, i);
 
-	/* Erase checksum field */
-	words[5] = 0;
+	/* Substract checksum field */
+	sum -= ip_header->ip_sum;
 
-	/* Compute checksum */
-	uint32_t sum1 = 0;
-	uint16_t sum2 = 0;
-
-	/* Sum all 16-bits words */
-	for(i = 0; i < (ip_header->ip_hl*2); i++)
-		sum1 += words[i];
-
-	if(sum1 > 0xFFFF)
-		sum2 = (sum1 >> 16) + (sum1 & 0xFFFF);
-	else
-		sum2 = (uint16_t)sum1;
+	/* Add carries */
+	while(sum >> 16) 
+		sum = (sum >> 16) + (sum & 0xFFFF);
 
 	/* Print checksum in network format */
-	print_debug(DBG_LOW_LVL, "IP Checksum: 0x%.4X\n",
-						htons((uint16_t)~sum2));
+	print_debug(DBG_HIG_LVL, "IP Checksum: 0x%.4X\n",
+						htons((uint16_t)~sum));
 
-	free(words);
-
-	return ~sum2;
+	return ~sum;
 }
 
 /*
@@ -125,13 +111,10 @@ uint16_t compute_ip_checksum(const u_char *packet)
 static inline
 void update_ip_checksum(u_char *packet)
 {
-	u_char *pkt_ptr = (u_char *)packet;
-
 	struct ip *ip_header = NULL;
 
 	GET_IP_HEADER(packet, ip_header);
 
-	assert(ip_header != NULL);
 	/* Update with new checksum */
 	ip_header->ip_sum = compute_ip_checksum(packet);
 }
@@ -151,12 +134,8 @@ uint16_t compute_udp_checksum(const u_char *packet)
 	/* Retrieve IP header */
 	GET_IP_HEADER(packet, ip_header);
 
-	assert(ip_header != NULL);
-
 	/* Retrieve UDP header */
 	GET_UDP_HEADER(ip_header, udp_header);
-
-	if(!udp_header) return 0;
 
 	/* Compute padding */
 	uint8_t padding = ntohs(udp_header->len) % 2, i;
@@ -165,26 +144,26 @@ uint16_t compute_udp_checksum(const u_char *packet)
 
 	for(i = 0; i < ntohs(udp_header->len)/2; i++)
 		/* Sum all 16-bits words */
-		sum += *((uint16_t *)udp_header + i);
+		sum += GET_16_WORD(udp_header, i);
 
 	/* Substract checksum field */
-	sum -= ((udp_header->check));
+	sum -= udp_header->check;
 
 	if(padding)
-		sum += ntohs(*((uint8_t *)udp_header + i*2) << 8);
+		sum += ntohs(GET_8_WORD(udp_header, i*2) << 8);
 	
 	/* Add pseudo header */
 	for(i = 0; i < 4; i++)
-		sum += *((uint16_t *)&ip_header->ip_src + i);
+		sum += GET_16_WORD(&ip_header->ip_src, i);
 
 	sum += htons((uint16_t)ip_header->ip_p) + (udp_header->len);
 
-	/* Add caries */
+	/* Add carries */
 	while(sum >> 16) 
 		sum = (sum >> 16) + (sum & 0xFFFF);
 
 	/* Debug purpose */
-	print_debug(DBG_HIG_LVL, "UDP Checksum: 0x%.4X\n\n",
+	print_debug(DBG_HIG_LVL, "UDP Checksum: 0x%.4X\n",
 							htons((uint16_t)~sum));
 
 	return (uint16_t)~sum;
@@ -197,22 +176,34 @@ uint16_t compute_udp_checksum(const u_char *packet)
 static inline
 void update_udp_checksum(u_char *packet)
 {
-	u_char *pkt_ptr = (u_char *)packet;
-
 	struct ip *ip_header = NULL;
 	struct udphdr *udp_header = NULL;
 
 	GET_IP_HEADER(packet, ip_header);
 
-	assert(ip_header != NULL);
-
 	/* Retrieve UDP header */
 	GET_UDP_HEADER(ip_header, udp_header);
 
-	if(!udp_header) return 0;
-
 	/* Update with new checksum */
 	udp_header->check = compute_udp_checksum(packet);
+}
+
+
+/*
+ * Check if packet has a UDP header
+ * @param packet packet we check it has a UDP header
+ * @return 1 if packet has an UDP header
+ */
+static inline
+uint8_t contain_udp_header(u_char *packet)
+{
+	struct ip *ip_header = NULL;
+	struct udphdr *udp_header = NULL;
+
+	GET_IP_HEADER(packet, ip_header);
+
+	/* Check is an UDP header is encapsulated */
+	return (ip_header->ip_p == IPPROTO_UDP);
 }
 
 
@@ -323,7 +314,7 @@ static
 void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 								u_char *pdata)
 {
-	print_debug(DBG_LOW_LVL, "Process new packet\n");
+	print_debug(DBG_LOW_LVL, "Processing new packet\n");
 
 	/* Get user structure */
 	struct CBParam *param = (struct CBParam *)user;
@@ -346,7 +337,7 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 		/* Compute actual IP checksum */
 		uint16_t ip_checksum = compute_ip_checksum(pdata);
 
-		/* TODO: Check if checksum is corrupted */
+		/* TODO: Check if IP checksum is corrupted */
 
 		/* We necessary have an ip_list */
 		assert(ips != NULL);
@@ -360,12 +351,14 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 
 		update_ip_checksum(pdata);
 
-		/* Compute actual UDP checksum if exists */
-		uint16_t udp_checksum = compute_udp_checksum(pdata);
+		if(contain_udp_header(pdata)) {
+			/* Compute actual UDP checksum if exists */
+			uint16_t udp_checksum = compute_udp_checksum(pdata);
 
-		/* TODO: Check if checksum is corrupted */
+			/* TODO: Check if UDP checksum is corrupted */
 
-		update_udp_checksum(pdata);
+			update_udp_checksum(pdata);
+		}
 	}
 	
 	/* Dump new packet (anonymized) */
