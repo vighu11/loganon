@@ -24,7 +24,7 @@
      	else if(ether_type == ETHER_TYPE_8021Q)	\
 		ip_hdr = (struct ip *)(pkt + 18);	\
 	else							\
-		ip_hdr = NULL;	// assert(false);
+		assert(0);
 
 /*
  * Retrieve UDP header from IP header
@@ -34,13 +34,14 @@
 	if(ip_hdr->ip_p == IPPROTO_UDP) 							\
 		udp_hdr = (struct udphdr *)((u_char *)ip_hdr+sizeof(struct ip));	\
 	else												\
-		udp_hdr = NULL;	// assert(false);
+		assert(0);
 
 
 /*
  * Retrieve EtherType field from ethernet datagrams
  */
 #define GET_ETHERTYPE(pkt) \
+				   \
 	((uint16_t)(pkt[12]) << 8) | (uint16_t)pkt[13]
 
 /*
@@ -48,6 +49,7 @@
  * off is computed according to EtherType
  */
 #define GET_IPSRC(pkt, off) \
+				    \
 	&(((struct ip*)(pkt+off))->ip_src)
 
 /*
@@ -55,6 +57,7 @@
  * off is computed according to EtherType
  */
 #define GET_IPDST(pkt, off) \
+				    \
 	&(((struct ip*)(pkt+off+4))->ip_src)
 
 
@@ -63,6 +66,7 @@
  * From long to string
  */
 #define ADDR_LONG_TO_STR(ip_addr) \
+					    \
 	inet_ntoa(*((struct in_addr *)&ip_addr))
 
 /*
@@ -70,7 +74,23 @@
  * From long to string
  */
 #define ADDR_STR_TO_LONG(ip_addr) \
+					    \
 	inet_addr(ip_addr)
+
+
+/*
+ * Get a 16-bits word
+ */
+#define GET_16_WORD(buff, off) \
+					 \
+	*((uint16_t *)buff + off)
+
+/*
+ * Get a 16-bits word
+ */
+#define GET_8_WORD(buff, off) \
+					\
+	*((uint8_t *)buff + off)
 
 
 /* EtherType values */
