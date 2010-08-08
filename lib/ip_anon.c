@@ -221,6 +221,10 @@ char * truncation (char *ip, int newLen){
     return newIp;
 }
 
+
+
+
+
 /* Black marker, anonymize the entire field or just part of it */
 /* Input: Ip and number of octets to anonymize */
 char * black_marker(char *ip, int octet_number){
@@ -279,14 +283,9 @@ char * random_permutation(){
 
 
 
-//########################################################################
-//HASH TABLE STUFF
-//#######################################################################
-//
-//
-//
-//
-//
+/* 
+ * Creates new hash table. This is the handler for all ip_anon anonymization functions
+ */
 
 
 struct ip_node * loganon_hash_table(){
@@ -303,6 +302,11 @@ struct ip_node * loganon_hash_table(){
 	HASH_ADD(hh1, temp, index, sizeof(unsigned int), new);
 	return temp;
 }
+
+/*
+ * Free all memory ocupied by hash table
+ * @param The hash_table head node
+ */
 
 void loganon_destruct_hash(struct ip_node *hash_table){
 	
@@ -322,6 +326,13 @@ int add_to_hash(unsigned long int key, unsigned long int newValue){
 
 } 
 
+/**
+ * Return a new hash node or the node foundend in hash table
+ */
+
+
+
+
 struct ip_node * loganon_new_hash_node(struct ip_node *hash_table, unsigned long int key, unsigned long int newValue, struct ip_node *zero_node){
 	struct ip_node *node = NULL, *temp=NULL;
 	HASH_FIND(hh2, zero_node->old_by_new, &newValue, sizeof(unsigned int), temp);
@@ -335,6 +346,15 @@ struct ip_node * loganon_new_hash_node(struct ip_node *hash_table, unsigned long
 	return node;
 
 }
+
+
+/**
+ * Return a new random ip, or an already used ip on anonymization proccess
+ *
+ * @param A utHash table, network format ip
+ * @return a coherently ip, using hash table to verify
+ */
+
 
 unsigned long int loganon_ipv4_hash_anon(struct ip_node *hash_table, unsigned long int ind){
 	struct ip_node *tmp=NULL, *tmp1=NULL, *newNode = NULL;
