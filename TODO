@@ -1,0 +1,4 @@
+1 - Convert all char anonymization process to addr format
+2 - All of them should use hash_table
+3 - Add more digests to string
+4 - Consistent randomization and then digest..
