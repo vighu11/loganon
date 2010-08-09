@@ -97,8 +97,8 @@ void anonymize_ipv4()
 						 strlen(ip_anonymized) + 1);
 
 		/* Debug purpose */
-		print_debug(DBG_HIG_LVL, "%s -> %s\n", current->ip_original,
-								   current->ip_anonymized);
+		print_debug(DBG_HIG_LVL, "%-15s -> %-15s\n", current->ip_original,
+								 	  current->ip_anonymized);
 	}
 
 	/* Free memory */
