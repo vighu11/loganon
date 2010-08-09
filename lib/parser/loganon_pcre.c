@@ -101,7 +101,7 @@ int8_t pcre_search_ip(struct ip_anon **ips, const char *buffer)
 		snprintf(temp, sizeof(temp), "%.*s", len, buffer + ovector[2*i]);
 
 		/* Insert in list */
-		insertNewIP(temp, ips);	
+		insert_new_ip(temp, ips);	
 	}
 
 	return ANON_SUCCESS;

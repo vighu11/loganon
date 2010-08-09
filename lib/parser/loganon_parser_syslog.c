@@ -99,5 +99,5 @@ void anon_syslog_free(struct ip_anon *ips)
 	free(g_filenameIn);
 
 	/* Free list */
-	freeListIPs(ips);
+	free_list_ips(ips);
 }

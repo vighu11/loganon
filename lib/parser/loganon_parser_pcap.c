@@ -81,6 +81,7 @@ uint16_t compute_ip_checksum(const u_char *packet)
 {
 	struct ip *ip_header = NULL;
 
+	/* Retrieve IP header */
 	GET_IP_HEADER(packet, ip_header);
 
 	uint32_t sum = 0;
@@ -98,7 +99,7 @@ uint16_t compute_ip_checksum(const u_char *packet)
 		sum = (sum >> 16) + (sum & 0xFFFF);
 
 	/* Print checksum in network format */
-	print_debug(DBG_HIG_LVL, "IP Checksum: 0x%.4X\n",
+	print_debug(DBG_MED_LVL, "IP Checksum: 0x%.4X\n",
 						htons((uint16_t)~sum));
 
 	return ~sum;
@@ -113,6 +114,7 @@ void update_ip_checksum(u_char *packet)
 {
 	struct ip *ip_header = NULL;
 
+	/* Retrieve IP header */
 	GET_IP_HEADER(packet, ip_header);
 
 	/* Update with new checksum */
@@ -124,7 +126,7 @@ void update_ip_checksum(u_char *packet)
  * @param packet packet to compute checksum
  * @return UDP checksum in host format
  */
-static inline
+static inline 
 uint16_t compute_udp_checksum(const u_char *packet)
 {
 	struct ip *ip_header = NULL;
@@ -163,7 +165,7 @@ uint16_t compute_udp_checksum(const u_char *packet)
 		sum = (sum >> 16) + (sum & 0xFFFF);
 
 	/* Debug purpose */
-	print_debug(DBG_HIG_LVL, "UDP Checksum: 0x%.4X\n",
+	print_debug(DBG_MED_LVL, "Checksum: 0x%.4X\n",
 							htons((uint16_t)~sum));
 
 	return (uint16_t)~sum;
@@ -177,8 +179,10 @@ static inline
 void update_udp_checksum(u_char *packet)
 {
 	struct ip *ip_header = NULL;
+	/* UDP header infos */
 	struct udphdr *udp_header = NULL;
 
+	/* Retrieve IP header */
 	GET_IP_HEADER(packet, ip_header);
 
 	/* Retrieve UDP header */
@@ -188,9 +192,96 @@ void update_udp_checksum(u_char *packet)
 	udp_header->check = compute_udp_checksum(packet);
 }
 
+/*
+ * Compute TCP checksum
+ * @param packet packet to compute checksum
+ * @return TCP checksum in host format
+ */
+static inline
+uint16_t compute_tcp_checksum(const u_char *packet)
+{
+	struct ip *ip_header = NULL;
+	/* TCP header infos */
+	struct tcphdr *tcp_header = NULL;
+
+	/* Retrieve IP header */
+	GET_IP_HEADER(packet, ip_header);
+
+	/* Retrieve TCP header */
+	GET_TCP_HEADER(ip_header, tcp_header);
+
+	uint32_t sum = 0;
+
+	/* Compute length (TCP Header + Payload) */
+	uint32_t len = ntohs(ip_header->ip_len) - (ip_header->ip_hl << 2);
+
+	/* Compute padding */
+	uint8_t padding = len % 2, i;
+
+	for(i = 0; i < len/2; i++)
+		/* Sum all 16-bits words */
+		sum += GET_16_WORD(tcp_header, i);
+
+	/* Substract checksum field */
+	sum -= tcp_header->check;
+
+	if(padding)
+		sum += ntohs(GET_8_WORD(tcp_header, i*2) << 8);
+	
+	/* Add pseudo header */
+	for(i = 0; i < 4; i++)
+		sum += GET_16_WORD(&ip_header->ip_src, i);
+
+	sum += htons((uint16_t)ip_header->ip_p) + (len << 8);
+
+	/* Add carries */
+	while(sum >> 16) 
+		sum = (sum >> 16) + (sum & 0xFFFF);
+
+	/* Debug purpose */
+	print_debug(DBG_HIG_LVL, "Checksum: 0x%.4X\n",
+							htons((uint16_t)~sum));
+
+	return (uint16_t)~sum;	
+}
 
 /*
- * Check if packet has a UDP header
+ * Update TCP checksum after anonymization
+ * @param packet packet to update checksum
+ */
+static inline
+void update_tcp_checksum(u_char *packet)
+{
+	struct ip *ip_header = NULL;
+	/* UDP header infos */
+	struct tcphdr *tcp_header = NULL;
+
+	/* Retrieve IP header */
+	GET_IP_HEADER(packet, ip_header);
+
+	/* Retrieve UDP header */
+	GET_TCP_HEADER(ip_header, tcp_header);
+
+	/* Update with new checksum */
+	tcp_header->check = compute_tcp_checksum(packet);
+}
+
+/*
+ * Check if packet has an IP header
+ * @param packet packet we check it has a IP header
+ * @return 1 if packet has an IP header
+ */
+static inline
+uint8_t contain_ip_header(u_char *packet)
+{
+	/* Retrieve EtherType from ethernet packet */
+	uint16_t ether_type = GET_ETHERTYPE(packet);
+
+	return (ether_type == ETHER_TYPE_IP) || (ether_type == ETHER_TYPE_8021Q);
+}
+
+/*
+ * Check if packet has an UDP header
  * @param packet packet we check it has a UDP header
  * @return 1 if packet has an UDP header
  */
@@ -198,14 +289,30 @@ static inline
 uint8_t contain_udp_header(u_char *packet)
 {
 	struct ip *ip_header = NULL;
-	struct udphdr *udp_header = NULL;
 
+	/* Retrieve IP header */
 	GET_IP_HEADER(packet, ip_header);
 
 	/* Check is an UDP header is encapsulated */
 	return (ip_header->ip_p == IPPROTO_UDP);
 }
 
+/*
+ * Check if packet has a TCP header
+ * @param packet packet we check it has a TCP header
+ * @return 1 if packet has an TCP header
+ */
+static inline
+uint8_t contain_tcp_header(u_char *packet)
+{
+	struct ip *ip_header = NULL;
+
+	/* Retrieve IP header */
+	GET_IP_HEADER(packet, ip_header);
+
+	/* Check is an TCP header is encapsulated */
+	return (ip_header->ip_p == IPPROTO_TCP);
+}
 
 /*
  * Reads IP addresses in IP packet header
@@ -217,25 +324,23 @@ static inline
 void read_ip_addr(struct in_addr **ipsrc, struct in_addr **ipdst,
 								const u_char *packet)
 {
-	u_char *pkt_ptr = (u_char *)packet;
-
 	*ipdst = NULL;
 	*ipsrc = NULL;
 
      	/* Retrieve EtherType from ethernet packet */
-	uint16_t ether_type = GET_ETHERTYPE(pkt_ptr);
+	uint16_t ether_type = GET_ETHERTYPE(packet);
 
 	/* Compute offset of IP datagram */
 	if(ether_type == ETHER_TYPE_IP) {
 
-		*ipsrc = GET_IPSRC(pkt_ptr, 14);
-		*ipdst = GET_IPDST(pkt_ptr, 14);
+		*ipsrc = GET_IPSRC(packet, 14);
+		*ipdst = GET_IPDST(packet, 14);
 	}
 	/* VLAN tagged frame */
      	else if(ether_type == ETHER_TYPE_8021Q) {
 
-		*ipsrc = GET_IPSRC(pkt_ptr, 18);
-		*ipdst = GET_IPDST(pkt_ptr, 18);
+		*ipsrc = GET_IPSRC(packet, 18);
+		*ipdst = GET_IPDST(packet, 18);
 	}
 }
 
@@ -293,8 +398,8 @@ int8_t anon_pcap_search_data(struct ip_anon **ips)
 		/* Add new IP into the list if necessary */
 		if(ip_addr_src && ip_addr_dst) {
 
-			insertNewIP(inet_ntoa(*ip_addr_src), ips);
-			insertNewIP(inet_ntoa(*ip_addr_dst), ips);
+			insert_new_ip(inet_ntoa(*ip_addr_src), ips);
+			insert_new_ip(inet_ntoa(*ip_addr_dst), ips);
 		}
 	}
 
@@ -319,45 +424,49 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 	/* Get user structure */
 	struct CBParam *param = (struct CBParam *)user;
 
-	/*
-	 * For IP anonymization
-	 */
-	struct in_addr *ip_addr_src, *ip_addr_dst;
+	if(contain_ip_header(pdata)) {
 
-	/* Retrieve IP addresses */
-	read_ip_addr(&ip_addr_src, &ip_addr_dst, pdata);
+		/*
+		 * For IP anonymization
+		 */
+		struct in_addr *ip_addr_src, *ip_addr_dst;
 
-	/*
-	 * Apply anonymized data from linked lists
-	 */
-	if(ip_addr_src && ip_addr_dst) {
+		/* Retrieve IP addresses */
+		read_ip_addr(&ip_addr_src, &ip_addr_dst, pdata);
 
+		/*
+		 * Apply anonymized data from linked lists
+		 */
 		struct ip_anon *ips = param->ip_list;
 
 		/* Compute actual IP checksum */
 		uint16_t ip_checksum = compute_ip_checksum(pdata);
 
-		/* TODO: Check if IP checksum is corrupted */
-
 		/* We necessary have an ip_list */
 		assert(ips != NULL);
 
 		/* Search ip addresses in dictionnary */
-		ip_addr_src->s_addr = getAnonymizedIP(
+		ip_addr_src->s_addr = get_anonymized_ip(
 					ADDR_LONG_TO_STR(ip_addr_src->s_addr), ips);
 
-		ip_addr_dst->s_addr = getAnonymizedIP(
+		ip_addr_dst->s_addr = get_anonymized_ip(
 					ADDR_LONG_TO_STR(ip_addr_dst->s_addr), ips);
 
 		update_ip_checksum(pdata);
 
 		if(contain_udp_header(pdata)) {
+
 			/* Compute actual UDP checksum if exists */
 			uint16_t udp_checksum = compute_udp_checksum(pdata);
 
-			/* TODO: Check if UDP checksum is corrupted */
-
 			update_udp_checksum(pdata);
+		}
+		else if(contain_tcp_header(pdata)) {
+
+			/* Compute actual TCP checksum */
+			uint16_t tcp_checksum = compute_tcp_checksum(pdata);
+
+			update_tcp_checksum(pdata);
 		}
 	}
 	
@@ -431,5 +540,5 @@ void anon_pcap_free(struct ip_anon *ips)
 	free(g_filenameIn);
 
 	/* Free list */
-	freeListIPs(ips);
+	free_list_ips(ips);
 }

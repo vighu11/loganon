@@ -36,7 +36,7 @@ int8_t checkIfIPExists(const char* original, struct ip_anon *list)
  * @return LIST_EXIST if IP has already been inserted, otherwise LIST_SUCCESS
  */
 extern
-int8_t insertNewIP(const char *original, struct ip_anon **list)
+int8_t insert_new_ip(const char *original, struct ip_anon **list)
 {
 	struct ip_anon *current = *list;
 
@@ -92,7 +92,7 @@ int8_t insertNewIP(const char *original, struct ip_anon **list)
  * @return anonymized IP if original IP is found, otherwise NULL
  */
 extern
-uint32_t getAnonymizedIP(const char *originalIP, struct ip_anon *list)
+uint32_t get_anonymized_ip(const char *originalIP, struct ip_anon *list)
 {
 	struct ip_anon *current = list;
 
@@ -111,12 +111,12 @@ uint32_t getAnonymizedIP(const char *originalIP, struct ip_anon *list)
  * @param list IPs list to free
  */
 extern
-void freeListIPs(struct ip_anon *list)
+void free_list_ips(struct ip_anon *list)
 {
 	if(list) {
 
 		/* Recursive */
-		freeListIPs(list->next_ip);
+		free_list_ips(list->next_ip);
 		free(list);
 	}
 }
