@@ -78,7 +78,7 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 static
 void anonymize_ipv4()
 {
-	/* Create a new hash table for ips_v4 */
+	/* Create a new hash table for IPv4 addresses */
 	struct ip_node *hash_table = loganon_hash_table();
 
 	/* For each IP, anonymize it ! */
@@ -98,7 +98,7 @@ void anonymize_ipv4()
 
 		/* Debug purpose */
 		print_debug(DBG_HIG_LVL, "%-15s -> %-15s\n", current->ip_original,
-								 	  current->ip_anonymized);
+								 	   current->ip_anonymized);
 	}
 
 	/* Free memory */

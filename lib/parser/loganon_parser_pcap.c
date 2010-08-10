@@ -20,7 +20,10 @@
 static pcap_t *handleR = NULL; 
 
 /* Pcap file handle for writing */
-static pcap_dumper_t *handleW = NULL;
+static pcap_dumper_t *handleW;
+
+/* Number of processed packets */
+static uint32_t numPackets;
 
 /*
  * Pcap files names
@@ -216,8 +219,9 @@ uint16_t compute_tcp_checksum(const u_char *packet)
 	uint32_t len = ntohs(ip_header->ip_len) - (ip_header->ip_hl << 2);
 
 	/* Compute padding */
-	uint8_t padding = len % 2, i;
+	uint8_t padding = len % 2;
 
+	uint32_t i;
 	for(i = 0; i < len/2; i++)
 		/* Sum all 16-bits words */
 		sum += GET_16_WORD(tcp_header, i);
@@ -239,7 +243,7 @@ uint16_t compute_tcp_checksum(const u_char *packet)
 		sum = (sum >> 16) + (sum & 0xFFFF);
 
 	/* Debug purpose */
-	print_debug(DBG_HIG_LVL, "Checksum: 0x%.4X\n",
+	print_debug(DBG_MED_LVL, "Checksum: 0x%.4X\n",
 							htons((uint16_t)~sum));
 
 	return (uint16_t)~sum;	
@@ -419,7 +423,7 @@ static
 void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 								u_char *pdata)
 {
-	print_debug(DBG_LOW_LVL, "Processing new packet\n");
+	print_debug(DBG_MED_LVL, "Processing packet %u\n", numPackets);
 
 	/* Get user structure */
 	struct CBParam *param = (struct CBParam *)user;
@@ -472,6 +476,8 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 	
 	/* Dump new packet (anonymized) */
 	pcap_dump((u_char *)param->savefile, phdr, pdata);
+
+	numPackets++;
 }
 
 /*
