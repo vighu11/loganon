@@ -33,7 +33,7 @@ static FILETYPE FileType = UNKNOWN;
 /* IP addresses to anonymize */
 static struct ip_anon *ip_list;
 
-/*
+/**
  * Open file for anonymization
  * @param filename name of file we want anonymize
  * @param filenameOut name of new file after anonymization
@@ -72,7 +72,7 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 	return ANON_SUCCESS;
 }
 
-/*
+/**
  * Anonymize IPv4 addresses
  */
 static
@@ -105,7 +105,7 @@ void anonymize_ipv4()
 	loganon_destruct_hash(hash_table);
 }
 
-/*
+/**
  * Apply anonymization on sensitive data
  * @param level level of anonymization
  * @return ANON_SUCCESS if anonymization succeeded, otherwise ANON_FAIL
@@ -137,7 +137,7 @@ int8_t loganon_anonymize(uint8_t level)
 	return ANON_SUCCESS;
 }
 
-/*
+/**
  * Close handles and free memory
  * @return ANON_FAIL if no file has been successfully opened
  */
