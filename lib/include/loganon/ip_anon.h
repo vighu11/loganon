@@ -33,6 +33,10 @@ struct node * new_ip_list ();
 void put_on_top(struct node * head, struct node * current, struct node * last);
 
 
+unsigned int * loganon_black_marker(unsigned int ip, int octet_number);
+
+
+
 
 /* Structures for UTHASH LIBRARY */
 typedef struct ip_node {

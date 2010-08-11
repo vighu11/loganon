@@ -23,9 +23,9 @@ int loganon_ip_anon (int argc, char *argv[]){
   ip_list->field_value=0;
 
   struct ip_node *hash_table = (struct ip_node *) loganon_hash_table();
-  struct addr *print_ip = NULL;
+  struct addr *print_ip = NULL, *print_ip1 = NULL;
   print_ip = (struct addr *)  malloc(sizeof(struct addr));
-
+  print_ip1 = (struct addr *) malloc(sizeof(struct addr));
 
 	if (argc > 1){
 		for ( i=1; i < argc;i++) { 
@@ -43,6 +43,10 @@ int loganon_ip_anon (int argc, char *argv[]){
 			memcpy (print_ip,&ip,sizeof(ip)); //copying the original ip;
 			print_ip->addr_ip = loganon_ipv4_hash_anon(hash_table,ip.addr_ip);
 			printf("\t HASH -> %s\t \n", addr_ntoa(print_ip));
+
+			memcpy (print_ip1,&ip,sizeof(ip)); //copying the original ip;
+			print_ip1->addr_ip = loganon_black_marker(ip.addr_ip,2);
+			printf("\t BLACK -> %s\n", addr_ntoa(print_ip1));
 			
 			//Field Black Marker
 			/*newip = ipv4_black_marker(ip,1);
@@ -168,6 +172,14 @@ void put_on_top(struct node * head, struct node * current, struct node * last){
 
 
 //Black Marker
+
+/** 
+ * struct addr ip black marker, rotate fields "int fields" times
+ * @param struct addr ip (libdnet)
+ * @param int fields
+ * @return black marker struct addr ip
+ */
+
 struct addr * loganon_ipv4_black_marker (struct addr ip, int fields){
   unsigned long int expr1=0xFFFFFFFF, expr2=0;
   struct addr *newip = malloc(sizeof(struct addr));
@@ -191,7 +203,11 @@ struct addr * loganon_ipv4_black_marker (struct addr ip, int fields){
   return newip;
 }
 
-
+/**
+ * Gets and ip in struct addr (libdnet) format and rotate fields "int fields" times
+ * @param struct addr ip
+ * @param int fields
+ */
 struct addr * loganon_ipv4_field_rotation (struct addr ip, int fields){
   unsigned long int expr1=0xFFFFFFFF, expr2=0;
   struct addr *newip = malloc(sizeof(struct addr));
@@ -210,6 +226,13 @@ struct addr * loganon_ipv4_field_rotation (struct addr ip, int fields){
 
 
 
+/**
+ * Truncate the given char ip
+ * @param ip in string format
+ * @param the new len of string
+ * @return a pointer to the new ip string
+ */
+
 char * truncation (char *ip, int newLen){
     int i = 0;
     if (newLen > sizeof(ip))
@@ -225,8 +248,14 @@ char * truncation (char *ip, int newLen){
 
 
 
-/* Black marker, anonymize the entire field or just part of it */
-/* Input: Ip and number of octets to anonymize */
+/**
+ * Black marker, anonymize the entire field or just part of it 
+ * @param Ip in string format
+ * @param number of octets 
+ * @return The new black marked ip in char format
+ */
+
+
 char * black_marker(char *ip, int octet_number){
 
 	if (octet_number < 0)
@@ -256,14 +285,36 @@ char * black_marker(char *ip, int octet_number){
 
 
 
- 
+/**
+ * Anonymize the entire field or just part of it 
+ * @param unsigned int ip - Ip for black mark
+ * @param octet_number - Number of octets to mark
+ * @return Black marked Ip
+ */
 
+unsigned int * loganon_black_marker(unsigned int ip, int octet_number){
+	unsigned int mask = 0xFFFFFFFF;
+
+	if (octet_number < 0)
+		return ip;
+
+	mask = mask >> (octet_number * 8);
+	return ip & mask;
+
+}
+
+
+
+ 
+//============================Deprecated====================\\
 /* An algorithm to generate a random symetric key */
 int get_random_field() {
 	return rand() % 255;
 }
 
 /* An algorithm to generate a random permutation of Ip */
+
+
 char * random_permutation(){
 	int i = 0,n;
 	char result[15]={ "\0" }, *result_pointer;
@@ -279,12 +330,14 @@ char * random_permutation(){
 	return result_pointer;
 }
 
+//===========================================================\\
 
 
 
-
-/* 
+/**
  * Creates new hash table. This is the handler for all ip_anon anonymization functions
+ * @param None
+ * @return struct ip_node Hash Table Handler
  */
 
 
@@ -303,7 +356,7 @@ struct ip_node * loganon_hash_table(){
 	return temp;
 }
 
-/*
+/**
  * Free all memory ocupied by hash table
  * @param The hash_table head node
  */
@@ -329,9 +382,6 @@ int add_to_hash(unsigned long int key, unsigned long int newValue){
 /**
  * Return a new hash node or the node foundend in hash table
  */
-
-
-
 
 struct ip_node * loganon_new_hash_node(struct ip_node *hash_table, unsigned long int key, unsigned long int newValue, struct ip_node *zero_node){
 	struct ip_node *node = NULL, *temp=NULL;
