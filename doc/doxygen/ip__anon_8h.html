@@ -29,8 +29,10 @@
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip__anon_8h.html#13710fa512629c4f857e151f08383eab">truncation</a> (char *, int)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Truncate the given char ip.  <a href="#13710fa512629c4f857e151f08383eab"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip__anon_8h.html#77387dfe828d1f601b2bf1c63c635e6e">black_marker</a> (char *, int)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Black marker, anonymize the entire field or just part of it.  <a href="#77387dfe828d1f601b2bf1c63c635e6e"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip__anon_8h.html#986885cab14a641f47b9db4ce35c9047">swap</a> (char *, int, int)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip__anon_8h.html#c4beab2cd3e926db7821204c56f91055">random_permutation</a> ()</td></tr>
@@ -51,16 +53,21 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned int *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip__anon_8h.html#b3d6323d9ecb7848a03dac8c79bc7387">loganon_black_marker</a> (unsigned int ip, int octet_number)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Anonymize the entire field or just part of it.  <a href="#b3d6323d9ecb7848a03dac8c79bc7387"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct ip_node *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip__anon_8h.html#bf926fc3d7cfb0435dcf0f3ebc91793e">loganon_hash_table</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates new hash table. This is the handler for all <a class="el" href="structip__anon.html" title="IPs list for anonymization.">ip_anon</a> anonymization functions.  <a href="#bf926fc3d7cfb0435dcf0f3ebc91793e"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip__anon_8h.html#c28ee412faf27c021fddd21127944013">add_to_hash</a> (unsigned long int key, unsigned long int newValue)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct ip_node *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip__anon_8h.html#fc75d126442944e49d89ec6149a958c5">loganon_new_hash_node</a> (struct ip_node *, unsigned long int key, unsigned long int newValue, struct ip_node *)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return a new hash node or the node foundend in hash table.  <a href="#fc75d126442944e49d89ec6149a958c5"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned long int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip__anon_8h.html#e57922ef260a1f14534f1ed8ebd889b1">loganon_ipv4_hash_anon</a> (struct ip_node *hash_table, unsigned long int old_ip)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return a new random ip, or an already used ip on anonymization proccess.  <a href="#e57922ef260a1f14534f1ed8ebd889b1"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ip__anon_8h.html#8478de385f73b6ee4c8903510fe3ffbd">loganon_destruct_hash</a> (struct ip_node *hash_table)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Free all memory ocupied by hash table.  <a href="#8478de385f73b6ee4c8903510fe3ffbd"></a><br></td></tr>
 </table>
 <hr><h2>Function Documentation</h2>
 <a class="anchor" name="c28ee412faf27c021fddd21127944013"></a><!-- doxytag: member="ip_anon.h::add_to_hash" ref="c28ee412faf27c021fddd21127944013" args="(unsigned long int key, unsigned long int newValue)" -->
@@ -118,7 +125,9 @@
 <div class="memdoc">
 
 <p>
-Black marker, anonymize the entire field or just part of it <dl compact><dt><b>Parameters:</b></dt><dd>
+Black marker, anonymize the entire field or just part of it. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>Ip</em>&nbsp;</td><td>in string format </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>number</em>&nbsp;</td><td>of octets </td></tr>
@@ -241,7 +250,9 @@ Black marker, anonymize the entire field or just part of it <dl compact><dt><b>P
 <div class="memdoc">
 
 <p>
-Anonymize the entire field or just part of it <dl compact><dt><b>Parameters:</b></dt><dd>
+Anonymize the entire field or just part of it. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>unsigned</em>&nbsp;</td><td>int ip - Ip for black mark </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>octet_number</em>&nbsp;</td><td>- Number of octets to mark </td></tr>
@@ -268,7 +279,9 @@ Anonymize the entire field or just part of it <dl compact><dt><b>Parameters:</b>
 <div class="memdoc">
 
 <p>
-Free all memory ocupied by hash table <dl compact><dt><b>Parameters:</b></dt><dd>
+Free all memory ocupied by hash table. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>The</em>&nbsp;</td><td>hash_table head node </td></tr>
   </table>
@@ -292,11 +305,8 @@ Free all memory ocupied by hash table <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Creates new hash table. This is the handler for all <a class="el" href="structip__anon.html" title="IPs list for anonymization.">ip_anon</a> anonymization functions <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>None</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
+Creates new hash table. This is the handler for all <a class="el" href="structip__anon.html" title="IPs list for anonymization.">ip_anon</a> anonymization functions. 
+<p>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>struct ip_node Hash Table Handler </dd></dl>
 
 </div>
@@ -327,7 +337,8 @@ Creates new hash table. This is the handler for all <a class="el" href="structip
 <div class="memdoc">
 
 <p>
-Return a new random ip, or an already used ip on anonymization proccess<p>
+Return a new random ip, or an already used ip on anonymization proccess. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>A</em>&nbsp;</td><td>utHash table, network format ip </td></tr>
@@ -345,7 +356,7 @@ Return a new random ip, or an already used ip on anonymization proccess<p>
           <td class="memname">struct ip_node* loganon_new_hash_node           </td>
           <td>(</td>
           <td class="paramtype">struct ip_node *&nbsp;</td>
-          <td class="paramname"> <em>hash_table</em>, </td>
+          <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -363,7 +374,7 @@ Return a new random ip, or an already used ip on anonymization proccess<p>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">struct ip_node *&nbsp;</td>
-          <td class="paramname"> <em>zero_node</em></td><td>&nbsp;</td>
+          <td class="paramname"></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -375,7 +386,9 @@ Return a new random ip, or an already used ip on anonymization proccess<p>
 <div class="memdoc">
 
 <p>
-Return a new hash node or the node foundend in hash table 
+Return a new hash node or the node foundend in hash table. 
+<p>
+
 </div>
 </div><p>
 <a class="anchor" name="ae385b7290c92bbeb20c4b31210f4449"></a><!-- doxytag: member="ip_anon.h::new_ip_list" ref="ae385b7290c92bbeb20c4b31210f4449" args="()" -->
@@ -551,7 +564,9 @@ Return a new hash node or the node foundend in hash table
 <div class="memdoc">
 
 <p>
-Truncate the given char ip <dl compact><dt><b>Parameters:</b></dt><dd>
+Truncate the given char ip. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>ip</em>&nbsp;</td><td>in string format </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>the</em>&nbsp;</td><td>new len of string </td></tr>
@@ -561,7 +576,7 @@ Truncate the given char ip <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Aug 15 18:27:27 2010 for Loganon by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Aug 15 18:40:24 2010 for Loganon by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.3 </small></address>
 </body>

@@ -22,11 +22,11 @@ void loganon_str_test_all(char *arg){
 
 }
 
-/*
- * Give a string and get your md5 digest as result
- * @param String
- * @param len of string
- * @return string digest pointer
+/**
+ * \brief Give a string and get your md5 digest as result
+ * \param String
+ * \param len of string
+ * \return string digest pointer
  */
 
 char * loganon_md5_digest (const void * text, int len){
@@ -48,10 +48,10 @@ char * loganon_md5_digest (const void * text, int len){
 }
 
 /*
- * Give a string and get your md5 digest as result
- * @param String
- * @param len of string
- * @return string digest pointer
+ * \brief Give a string and get your md5 digest as result
+ * \param String
+ * \param len of string
+ * \return string digest pointer
  */
 char * loganon_sha1_digest (const void * text, int len){
 

@@ -204,9 +204,9 @@ struct addr * loganon_ipv4_black_marker (struct addr ip, int fields){
 }
 
 /**
- * Gets and ip in struct addr (libdnet) format and rotate fields "int fields" times
- * @param struct addr ip
- * @param int fields
+ * \brief Gets and ip in struct addr (libdnet) format and rotate fields "int fields" times
+ * \param struct addr ip
+ * \param int fields
  */
 struct addr * loganon_ipv4_field_rotation (struct addr ip, int fields){
   unsigned long int expr1=0xFFFFFFFF, expr2=0;
@@ -227,10 +227,10 @@ struct addr * loganon_ipv4_field_rotation (struct addr ip, int fields){
 
 
 /**
- * Truncate the given char ip
- * @param ip in string format
- * @param the new len of string
- * @return a pointer to the new ip string
+ * \brief Truncate the given char ip
+ * \param ip in string format
+ * \param the new len of string
+ * \return a pointer to the new ip string
  */
 
 char * truncation (char *ip, int newLen){
@@ -249,10 +249,10 @@ char * truncation (char *ip, int newLen){
 
 
 /**
- * Black marker, anonymize the entire field or just part of it 
- * @param Ip in string format
- * @param number of octets 
- * @return The new black marked ip in char format
+ * \brief Black marker, anonymize the entire field or just part of it 
+ * \param Ip in string format
+ * \param number of octets 
+ * \return The new black marked ip in char format
  */
 
 
@@ -286,10 +286,10 @@ char * black_marker(char *ip, int octet_number){
 
 
 /**
- * Anonymize the entire field or just part of it 
- * @param unsigned int ip - Ip for black mark
- * @param octet_number - Number of octets to mark
- * @return Black marked Ip
+ * \brief Anonymize the entire field or just part of it 
+ * \param unsigned int ip - Ip for black mark
+ * \param octet_number - Number of octets to mark
+ * \return Black marked Ip
  */
 
 unsigned int * loganon_black_marker(unsigned int ip, int octet_number){
@@ -335,9 +335,8 @@ char * random_permutation(){
 
 
 /**
- * Creates new hash table. This is the handler for all ip_anon anonymization functions
- * @param None
- * @return struct ip_node Hash Table Handler
+ * \brief Creates new hash table. This is the handler for all ip_anon anonymization functions
+ * \return struct ip_node Hash Table Handler
  */
 
 
@@ -357,8 +356,8 @@ struct ip_node * loganon_hash_table(){
 }
 
 /**
- * Free all memory ocupied by hash table
- * @param The hash_table head node
+ * \brief Free all memory ocupied by hash table
+ * \param The hash_table head node
  */
 
 void loganon_destruct_hash(struct ip_node *hash_table){
@@ -380,7 +379,7 @@ int add_to_hash(unsigned long int key, unsigned long int newValue){
 } 
 
 /**
- * Return a new hash node or the node foundend in hash table
+ * \brief Return a new hash node or the node foundend in hash table
  */
 
 struct ip_node * loganon_new_hash_node(struct ip_node *hash_table, unsigned long int key, unsigned long int newValue, struct ip_node *zero_node){
@@ -399,10 +398,10 @@ struct ip_node * loganon_new_hash_node(struct ip_node *hash_table, unsigned long
 
 
 /**
- * Return a new random ip, or an already used ip on anonymization proccess
+ * \brief Return a new random ip, or an already used ip on anonymization proccess
  *
- * @param A utHash table, network format ip
- * @return a coherently ip, using hash table to verify
+ * \param A utHash table, network format ip
+ * \return a coherently ip, using hash table to verify
  */
 
 
