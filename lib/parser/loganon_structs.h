@@ -8,8 +8,8 @@
 
 #define IP_ADDR_LEN 15
 
-/*
- * IPs list for anonymization
+/**
+ * \brief IPs list for anonymization
  */
 struct ip_anon {
 

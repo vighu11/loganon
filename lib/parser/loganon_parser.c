@@ -21,23 +21,22 @@
 #include "loganon_parser_syslog.h"
 
 
-/*
- * File type enumeration
+/**
+ * \brief File type enumeration
  */
 typedef enum {UNKNOWN, PCAP, SYSLOG} FILETYPE;
 
 /* Type of file being processed */
 static FILETYPE FileType = UNKNOWN;
 
-
 /* IP addresses to anonymize */
 static struct ip_anon *ip_list;
 
 /**
- * Open file for anonymization
- * @param filename name of file we want anonymize
- * @param filenameOut name of new file after anonymization
- * @return ANON_FAIL if file doesn't exist or is unsupported
+ * \brief Open file for anonymization
+ * \param filename name of file we want anonymize
+ * \aram filenameOut name of new file after anonymization
+ * \return ANON_FAIL if file doesn't exist or is unsupported
  */
 extern
 int8_t loganon_init(const char *filenameIn, const char *filenameOut)
@@ -73,7 +72,7 @@ int8_t loganon_init(const char *filenameIn, const char *filenameOut)
 }
 
 /**
- * Anonymize IPv4 addresses
+ * \brief Anonymize IPv4 addresses
  */
 static
 void anonymize_ipv4()
@@ -106,9 +105,9 @@ void anonymize_ipv4()
 }
 
 /**
- * Apply anonymization on sensitive data
- * @param level level of anonymization
- * @return ANON_SUCCESS if anonymization succeeded, otherwise ANON_FAIL
+ * \brief Apply anonymization on sensitive data
+ * \param level level of anonymization
+ * \return ANON_SUCCESS if anonymization succeeded, otherwise ANON_FAIL
  */
 extern
 int8_t loganon_anonymize(uint8_t level)
@@ -138,8 +137,8 @@ int8_t loganon_anonymize(uint8_t level)
 }
 
 /**
- * Close handles and free memory
- * @return ANON_FAIL if no file has been successfully opened
+ * \brief Close handles and free memory
+ * \return ANON_FAIL if no file has been successfully opened
  */
 extern
 int8_t loganon_terminate()

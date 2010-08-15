@@ -14,13 +14,13 @@
 #include "loganon_regex.h"
 
 
-/*
- * Matches a PCRE regex
- * @param tab results tab
- * @param nb number of results
- * @param buffer string on which we search
- * @param pattern regex PCRE we apply on buffer
- * @return ANON_FAIL if pcre fails, otherwise ANON_SUCCESS
+/**
+ * \brief Matches a PCRE regex
+ * \param tab results tab
+ * \param nb number of results
+ * \param buffer string on which we search
+ * \param pattern regex PCRE we apply on buffer
+ * \return ANON_FAIL if pcre fails, otherwise ANON_SUCCESS
  */
 static
 int8_t match_regex(int32_t *tab, int32_t *nb,
@@ -69,10 +69,10 @@ int8_t match_regex(int32_t *tab, int32_t *nb,
 }
 
 /*
- * Retrieve IPs from buffer
- * @param ips IPs linked list
- * @param buffer buffer we wants search IPs into
- * @return ANON_FAIL if pcre fails, otherwise ANON_SUCCESS
+ * \brief Retrieve IPs from buffer
+ * \param ips IPs linked list
+ * \param buffer buffer we wants search IPs into
+ * \return ANON_FAIL if pcre fails, otherwise ANON_SUCCESS
  */
 extern
 int8_t pcre_search_ip(struct ip_anon **ips, const char *buffer)

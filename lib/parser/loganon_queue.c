@@ -10,11 +10,11 @@
 #include "loganon_queue.h"
 
 
-/*
- * Check if an IP has already be found
- * @param original original IP
- * @param list pointer on the IPs list
- * @return LIST_EXIST if IP is already known, otherwise LIST_SUCCESS
+/**
+ * \brief Check if an IP has already be found
+ * \param original original IP
+ * \param list pointer on the IPs list
+ * \return LIST_EXIST if IP is already known, otherwise LIST_SUCCESS
  */
 static 
 int8_t checkIfIPExists(const char* original, struct ip_anon *list)
@@ -31,9 +31,9 @@ int8_t checkIfIPExists(const char* original, struct ip_anon *list)
 	return LIST_SUCCESS;
 }
 
-/*
- * Insert a new IP in list cheking if it's a new IP or not
- * @return LIST_EXIST if IP has already been inserted, otherwise LIST_SUCCESS
+/**
+ * \brief Insert a new IP in list cheking if it's a new IP or not
+ * \return LIST_EXIST if IP has already been inserted, otherwise LIST_SUCCESS
  */
 extern
 int8_t insert_new_ip(const char *original, struct ip_anon **list)
@@ -85,11 +85,11 @@ int8_t insert_new_ip(const char *original, struct ip_anon **list)
 	return LIST_SUCCESS;
 }
 
-/*
- * Retrieve anonymized IP from the original one
- * @param originalIP IP not anonymized
- * @param list IPs list
- * @return anonymized IP if original IP is found, otherwise NULL
+/**
+ * \brief Retrieve anonymized IP from the original one
+ * \param originalIP IP not anonymized
+ * \param list IPs list
+ * \return anonymized IP if original IP is found, otherwise NULL
  */
 extern
 uint32_t get_anonymized_ip(const char *originalIP, struct ip_anon *list)
@@ -106,9 +106,9 @@ uint32_t get_anonymized_ip(const char *originalIP, struct ip_anon *list)
 	return 0;
 }
 
-/*
- * Free all IPs inserted in list
- * @param list IPs list to free
+/**
+ * \brief Free all IPs inserted in list
+ * \param list IPs list to free
  */
 extern
 void free_list_ips(struct ip_anon *list)
