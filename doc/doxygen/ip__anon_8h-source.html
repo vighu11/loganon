@@ -19,8 +19,8 @@
 <a name="l00005"></a>00005 <span class="preprocessor">#include &lt;dumbnet.h&gt;</span>
 <a name="l00006"></a>00006 <span class="preprocessor">#include &lt;<a class="code" href="uthash_8h.html">uthash/uthash.h</a>&gt;</span>
 <a name="l00007"></a>00007 
-<a name="l00008"></a>00008 <span class="keywordtype">char</span> * <a class="code" href="ip__anon_8c.html#027c445f728eb7e7a727cb7c5bd9ef17">truncation</a> ( <span class="keywordtype">char</span> *, <span class="keywordtype">int</span>);
-<a name="l00009"></a>00009 <span class="keywordtype">char</span> * <a class="code" href="ip__anon_8c.html#e9fc18b74b98edbe92da70c30a23e6dd">black_marker</a>(<span class="keywordtype">char</span> *, <span class="keywordtype">int</span> );
+<a name="l00008"></a>00008 <span class="keywordtype">char</span> * <a class="code" href="ip__anon_8c.html#027c445f728eb7e7a727cb7c5bd9ef17" title="Truncate the given char ip.">truncation</a> ( <span class="keywordtype">char</span> *, <span class="keywordtype">int</span>);
+<a name="l00009"></a>00009 <span class="keywordtype">char</span> * <a class="code" href="ip__anon_8c.html#e9fc18b74b98edbe92da70c30a23e6dd" title="Black marker, anonymize the entire field or just part of it.">black_marker</a>(<span class="keywordtype">char</span> *, <span class="keywordtype">int</span> );
 <a name="l00010"></a>00010 <span class="keywordtype">void</span> <a class="code" href="ip__anon_8h.html#986885cab14a641f47b9db4ce35c9047">swap</a>(<span class="keywordtype">char</span> *, <span class="keywordtype">int</span> , <span class="keywordtype">int</span> );
 <a name="l00011"></a>00011 <span class="keywordtype">char</span> * <a class="code" href="ip__anon_8c.html#c4beab2cd3e926db7821204c56f91055">random_permutation</a>();
 <a name="l00012"></a>00012 
@@ -47,7 +47,7 @@
 <a name="l00033"></a>00033 <span class="keywordtype">void</span> <a class="code" href="ip__anon_8c.html#2784b509012dbf7bf0b47a7f8a1e3e8f">put_on_top</a>(<span class="keyword">struct</span> node * head, <span class="keyword">struct</span> node * current, <span class="keyword">struct</span> node * last);
 <a name="l00034"></a>00034 
 <a name="l00035"></a>00035 
-<a name="l00036"></a>00036 <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> * <a class="code" href="ip__anon_8c.html#b3d6323d9ecb7848a03dac8c79bc7387">loganon_black_marker</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ip, <span class="keywordtype">int</span> octet_number);
+<a name="l00036"></a>00036 <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> * <a class="code" href="ip__anon_8c.html#b3d6323d9ecb7848a03dac8c79bc7387" title="Anonymize the entire field or just part of it.">loganon_black_marker</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ip, <span class="keywordtype">int</span> octet_number);
 <a name="l00037"></a>00037 
 <a name="l00038"></a>00038 
 <a name="l00039"></a>00039 
@@ -63,15 +63,15 @@
 <a name="l00049"></a>00049 
 <a name="l00050"></a>00050 }<a class="code" href="struct__ip__node.html">_ip_node</a>;
 <a name="l00051"></a>00051 
-<a name="l00052"></a>00052 <span class="keyword">struct </span>ip_node * <a class="code" href="ip__anon_8c.html#bf926fc3d7cfb0435dcf0f3ebc91793e">loganon_hash_table</a>();
+<a name="l00052"></a>00052 <span class="keyword">struct </span>ip_node * <a class="code" href="ip__anon_8c.html#bf926fc3d7cfb0435dcf0f3ebc91793e" title="Creates new hash table. This is the handler for all ip_anon anonymization functions...">loganon_hash_table</a>();
 <a name="l00053"></a>00053 <span class="keywordtype">int</span> <a class="code" href="ip__anon_8c.html#c28ee412faf27c021fddd21127944013">add_to_hash</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> key, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> newValue);
-<a name="l00054"></a>00054 <span class="keyword">struct </span>ip_node * <a class="code" href="ip__anon_8c.html#12962f813e952d5258e73d7b81d77468">loganon_new_hash_node</a>(<span class="keyword">struct</span> ip_node*, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> key, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> newValue, <span class="keyword">struct</span> ip_node *);
+<a name="l00054"></a>00054 <span class="keyword">struct </span>ip_node * <a class="code" href="ip__anon_8c.html#12962f813e952d5258e73d7b81d77468" title="Return a new hash node or the node foundend in hash table.">loganon_new_hash_node</a>(<span class="keyword">struct</span> ip_node*, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> key, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> newValue, <span class="keyword">struct</span> ip_node *);
 <a name="l00055"></a>00055 
-<a name="l00056"></a>00056 <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> <a class="code" href="ip__anon_8c.html#bdc4fd46ff6388f344e3401c1e376470">loganon_ipv4_hash_anon</a>(<span class="keyword">struct</span> ip_node *hash_table, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> old_ip);
-<a name="l00057"></a>00057 <span class="keywordtype">void</span> <a class="code" href="ip__anon_8c.html#8478de385f73b6ee4c8903510fe3ffbd">loganon_destruct_hash</a>(<span class="keyword">struct</span> ip_node *hash_table);
+<a name="l00056"></a>00056 <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> <a class="code" href="ip__anon_8c.html#bdc4fd46ff6388f344e3401c1e376470" title="Return a new random ip, or an already used ip on anonymization proccess.">loganon_ipv4_hash_anon</a>(<span class="keyword">struct</span> ip_node *hash_table, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> old_ip);
+<a name="l00057"></a>00057 <span class="keywordtype">void</span> <a class="code" href="ip__anon_8c.html#8478de385f73b6ee4c8903510fe3ffbd" title="Free all memory ocupied by hash table.">loganon_destruct_hash</a>(<span class="keyword">struct</span> ip_node *hash_table);
 <a name="l00058"></a>00058 
 <a name="l00059"></a>00059 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Sun Aug 15 18:27:27 2010 for Loganon by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Sun Aug 15 18:40:24 2010 for Loganon by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.3 </small></address>
 </body>
