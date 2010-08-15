@@ -30,8 +30,8 @@ static uint32_t numPackets;
  */
 static char *g_filenameIn, *g_filenameOut;
 
-/*
- * Data sent to PCAP parser's callback
+/**
+ * \brief Data sent to PCAP parser's callback
  */
 struct CBParam {
 
@@ -40,9 +40,9 @@ struct CBParam {
 	struct ip_anon *ip_list;
 };
 
-/*
- * Display each IP found
- * @param ips pointer on the IPs list
+/**
+ * \brief Display each IP found
+ * \param ips pointer on the IPs list
  */
 static
 void display_ip_addr(struct ip_anon *ips)
@@ -54,10 +54,10 @@ void display_ip_addr(struct ip_anon *ips)
 		print_debug(DBG_MED_LVL, "IP: %s\n", current->ip_original);
 }
 
-/*
- * Open a pcap file in offline mode
+/**
+ * \brief Open a pcap file in offline mode
  * This function will be used several times
- * @param filename name of file to open
+ * \param filename name of file to open
  */
 static 
 int8_t open_pcap_file(const char *filename)
@@ -69,15 +69,15 @@ int8_t open_pcap_file(const char *filename)
 		print_debug(DBG_HIG_LVL, "pcap_open_offline error: %s\n", errbuf);
 		/* Return failure */
 		return ANON_FAIL; 
-	}
+	 }
 
 	return ANON_SUCCESS;
 }
 
-/*
- * Compute IP checksum
- * @param packet packet to compute checksum
- * @return IP checksum in host format
+/**
+ * \brief Compute IP checksum
+ * \param packet packet to compute checksum
+ * \return IP checksum in host format
  */
 static inline
 uint16_t compute_ip_checksum(const u_char *packet)
@@ -108,9 +108,9 @@ uint16_t compute_ip_checksum(const u_char *packet)
 	return ~sum;
 }
 
-/*
- * Update IP checksum after anonymization
- * @param packet packet to update checksum
+/**
+ * \brief Update IP checksum after anonymization
+ * \param packet packet to update checksum
  */
 static inline
 void update_ip_checksum(u_char *packet)
@@ -124,10 +124,10 @@ void update_ip_checksum(u_char *packet)
 	ip_header->ip_sum = compute_ip_checksum(packet);
 }
 
-/*
- * Compute UDP checksum
- * @param packet packet to compute checksum
- * @return UDP checksum in host format
+/**
+ * \brief Compute UDP checksum
+ * \param packet packet to compute checksum
+ * \return UDP checksum in host format
  */
 static inline 
 uint16_t compute_udp_checksum(const u_char *packet)
@@ -174,9 +174,9 @@ uint16_t compute_udp_checksum(const u_char *packet)
 	return (uint16_t)~sum;
 }
 
-/*
- * Update UDP checksum after anonymization
- * @param packet packet to update checksum
+/**
+ * \brief Update UDP checksum after anonymization
+ * \param packet packet to update checksum
  */
 static inline
 void update_udp_checksum(u_char *packet)
@@ -195,10 +195,10 @@ void update_udp_checksum(u_char *packet)
 	udp_header->check = compute_udp_checksum(packet);
 }
 
-/*
- * Compute TCP checksum
- * @param packet packet to compute checksum
- * @return TCP checksum in host format
+/**
+ * \brief Compute TCP checksum
+ * \param packet packet to compute checksum
+ * \return TCP checksum in host format
  */
 static inline
 uint16_t compute_tcp_checksum(const u_char *packet)
@@ -249,9 +249,9 @@ uint16_t compute_tcp_checksum(const u_char *packet)
 	return (uint16_t)~sum;	
 }
 
-/*
- * Update TCP checksum after anonymization
- * @param packet packet to update checksum
+/**
+ * \brief Update TCP checksum after anonymization
+ * \param packet packet to update checksum
  */
 static inline
 void update_tcp_checksum(u_char *packet)
@@ -270,10 +270,10 @@ void update_tcp_checksum(u_char *packet)
 	tcp_header->check = compute_tcp_checksum(packet);
 }
 
-/*
- * Check if packet has an IP header
- * @param packet packet we check it has a IP header
- * @return 1 if packet has an IP header
+/**
+ * \brief Check if packet has an IP header
+ * \param packet packet we check it has a IP header
+ * \return 1 if packet has an IP header
  */
 static inline
 uint8_t contain_ip_header(u_char *packet)
@@ -284,10 +284,10 @@ uint8_t contain_ip_header(u_char *packet)
 	return (ether_type == ETHER_TYPE_IP) || (ether_type == ETHER_TYPE_8021Q);
 }
 
-/*
- * Check if packet has an UDP header
- * @param packet packet we check it has a UDP header
- * @return 1 if packet has an UDP header
+/**
+ * \brief Check if packet has an UDP header
+ * \param packet packet we check it has a UDP header
+ * \return 1 if packet has an UDP header
  */
 static inline
 uint8_t contain_udp_header(u_char *packet)
@@ -301,10 +301,10 @@ uint8_t contain_udp_header(u_char *packet)
 	return (ip_header->ip_p == IPPROTO_UDP);
 }
 
-/*
- * Check if packet has a TCP header
- * @param packet packet we check it has a TCP header
- * @return 1 if packet has an TCP header
+/**
+ * \brief Check if packet has a TCP header
+ * \param packet packet we check it has a TCP header
+ * \return 1 if packet has an TCP header
  */
 static inline
 uint8_t contain_tcp_header(u_char *packet)
@@ -318,11 +318,11 @@ uint8_t contain_tcp_header(u_char *packet)
 	return (ip_header->ip_p == IPPROTO_TCP);
 }
 
-/*
- * Reads IP addresses in IP packet header
- * @param ipsrc store read IP src (NULL if doesn't exist)
- * @param ipdst store read IP dst (NULL if doesn't exist)
- * @param packet packet to parse
+/**
+ * \brief Reads IP addresses in IP packet header
+ * \param ipsrc store read IP src (NULL if doesn't exist)
+ * \param ipdst store read IP dst (NULL if doesn't exist)
+ * \param packet packet to parse
  */
 static inline
 void read_ip_addr(struct in_addr **ipsrc, struct in_addr **ipdst,
@@ -348,11 +348,11 @@ void read_ip_addr(struct in_addr **ipsrc, struct in_addr **ipdst,
 	}
 }
 
-/*
- * Open pcap file in offline mode
- * @param filenameIn name of file we want anonymize
- * @param filenameOut name of new file after anonymization
- * @return ANON_FAIL if file doesn't exist, otherwise ANON_SUCCESS
+/**
+ * \brief Open pcap file in offline mode
+ * \param filenameIn name of file we want anonymize
+ * \param filenameOut name of new file after anonymization
+ * \return ANON_FAIL if file doesn't exist, otherwise ANON_SUCCESS
  */
 extern
 int8_t anon_pcap_open(const char *filenameIn, const char *filenameOut)
@@ -379,10 +379,10 @@ int8_t anon_pcap_open(const char *filenameIn, const char *filenameOut)
 	return ANON_SUCCESS;
 }
 
-/*
- * Parse pcap file to find out sensitive data
- * @param ips pointer on a pointer on the IPs list
- * @return ANON_FAIL if search fails, otherwise ANON_SUCCESS
+/**
+ * \brief Parse pcap file to find out sensitive data
+ * \param ips pointer on a pointer on the IPs list
+ * \return ANON_FAIL if search fails, otherwise ANON_SUCCESS
  */
 extern
 int8_t anon_pcap_search_data(struct ip_anon **ips)
@@ -417,7 +417,7 @@ int8_t anon_pcap_search_data(struct ip_anon **ips)
 }
 
 /*
- * Perform anonymization on sensitive data previously retrieved
+ * \brief Perform anonymization on sensitive data previously retrieved
  */
 static 
 void read_callback(u_char *user, struct pcap_pkthdr *phdr,
@@ -481,9 +481,9 @@ void read_callback(u_char *user, struct pcap_pkthdr *phdr,
 }
 
 /*
- * Write anonymized sensitive data into a new file (filenameOut)
- * @param ips pointer on the anonymized IPs list
- * @return ANON_FAIL if can't write file, otherwise ANON_SUCCESS
+ * \brief Write anonymized sensitive data into a new file (filenameOut)
+ * \param ips pointer on the anonymized IPs list
+ * \return ANON_FAIL if can't write file, otherwise ANON_SUCCESS
  */
 extern
 int8_t anon_pcap_write_data(struct ip_anon *ips)
@@ -528,8 +528,8 @@ int8_t anon_pcap_write_data(struct ip_anon *ips)
 }
 
 /*
- * Free all allocated memory
- * @param ips pointer on the IPs list
+ * \brief Free all allocated memory
+ * \param ips pointer on the IPs list
  */
 extern
 void anon_pcap_free(struct ip_anon *ips)

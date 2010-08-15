@@ -6,8 +6,8 @@
 #ifndef LOGANON_ERRORS_H
 #define LOGANON_ERRORS_H
 
-/*
- * Macro for processing Loganon errors
+/**
+ * \brief Macro for processing Loganon errors
  */
 #define ANON_PROCESS_ERROR(msg)			\
 								\
@@ -17,14 +17,14 @@
 		return ret;					\
 	}
 
-/*
- * Return values for parsers
+/**
+ * \brief Return values for parsers
  */
 #define ANON_FAIL     -1
 #define ANON_SUCCESS   0
 
-/*
- * Return values for lists
+/**
+ * \brief Return values for lists
  */
 #define LIST_FAIL		-1
 #define LIST_EXIST	 0

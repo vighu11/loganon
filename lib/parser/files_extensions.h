@@ -6,7 +6,9 @@
 #ifndef FILES_EXTENSIONS_H
 #define FILES_EXTENSIONS_H
 
-/* pcap file (wireshark, tcpdump...) */
+/**
+ * \brief pcap file (wireshark, tcpdump...)
+ */
 #define PCAP_FILE ".pcap"
 
 #endif
