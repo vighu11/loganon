@@ -1,0 +1,6 @@
+Gabriel Cavalcante (gabriel@las.ic.unicamp.br) --- 09/02/2010
+
+Run with -p to open an pcap file,
+with any parameter to pcap sniff an device or with -i to specify a device.
+
+A lot of code has stoled from wireshark and netexpect. This folder contains code only to learn how to use the wireshark dissectors
